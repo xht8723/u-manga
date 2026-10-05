@@ -1,0 +1,16 @@
+[
+  {"protocols":["openai","responses"],"prefixes":["deepseek-v4-","deepseek-flash"],"state":"switchable","on":"low","off":"none"},
+  {"protocols":["openai","responses"],"models":["gpt-5.1","gpt-5.2","gpt-5.4","gpt-5.5"],"state":"switchable","on":"low","off":"none"},
+  {"protocols":["responses"],"models":["gpt-5.2-pro","gpt-5.4-pro","gpt-5.5-pro"],"state":"fixed_on","on":"medium","off":null},
+  {"protocols":["responses"],"models":["gpt-5-pro"],"state":"fixed_on","on":"high","off":null},
+  {"protocols":["openai","responses"],"models":["gpt-6-astra","o1","o3","o3-mini","o4-mini"],"state":"fixed_on","on":"low","off":null},
+  {"protocols":["openai","responses"],"models":["gpt-5","gpt-5-mini","gpt-5-nano"],"state":"fixed_on","on":"minimal","off":null},
+  {"protocols":["openai","responses"],"prefixes":["gpt-4.1","gpt-4o","gpt-3.5"],"state":"fixed_off","on":null,"off":null},
+  {"protocols":["gemini"],"prefixes":["gemini-2.5-flash-lite"],"state":"switchable","on":512,"off":0},
+  {"protocols":["gemini"],"prefixes":["gemini-2.5-flash"],"state":"switchable","on":1,"off":0},
+  {"protocols":["gemini"],"prefixes":["gemini-2.5-pro"],"state":"fixed_on","on":128,"off":null},
+  {"protocols":["gemini"],"prefixes":["gemini-3.1-pro","gemini-3-pro"],"state":"fixed_on","on":"low","off":null},
+  {"protocols":["gemini"],"prefixes":["gemini-1.5","gemini-2.0-flash"],"state":"fixed_off","on":null,"off":null},
+  {"protocols":["anthropic"],"prefixes":["claude-3-7-sonnet","claude-sonnet-4-5","claude-sonnet-4-6","claude-opus-4-5","claude-opus-4-6","claude-haiku-4-5","claude-sonnet-4-2025","claude-opus-4-2025"],"state":"switchable","on":1024,"off":null},
+  {"protocols":["anthropic"],"prefixes":["claude-3-5","claude-3-opus","claude-3-haiku"],"state":"fixed_off","on":null,"off":null}
+]

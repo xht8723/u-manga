@@ -1,0 +1,914 @@
+[
+  {
+    "key": "instructions.label_22",
+    "parts": [
+      "Unknown prompt placeholder: ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "audit.job_labels",
+    "parts": [
+      "Job labels unavailable; refresh Jobs to retry. ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "audit.cleanup_repair",
+    "parts": [
+      "Cleanup needs review. ",
+      " could not run: ",
+      ". Restore this model/device, then Confirm an edit to retry. Start a fresh page run to use a different cleanup method."
+    ],
+    "slots": [
+      "arg0",
+      "arg1"
+    ]
+  },
+  {
+    "key": "m_ac479220b7c8",
+    "parts": [
+      "Library moved. Some old copies could not be retired; select the same destination in Move library to retry. ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_96ecece00c77",
+    "parts": [
+      "Cleanup needs review. ",
+      " could not run: ",
+      ". Verify the model or choose another cleanup method, then Re-clean."
+    ],
+    "slots": [
+      "arg0",
+      "arg1"
+    ]
+  },
+  {
+    "key": "m_198b8dee4b00",
+    "parts": [
+      "Unsupported book format ",
+      "; this release requires format ",
+      ". Create a new book from its original sources."
+    ],
+    "slots": [
+      "arg0",
+      "arg1"
+    ]
+  },
+  {
+    "key": "m_e439670b96a7",
+    "parts": [
+      "Ollama metadata request failed (HTTP ",
+      "). Check the model, server address, and Ollama version."
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_8123a46f3b2b",
+    "parts": [
+      "",
+      " is missing or damaged. Download or verify it in Settings → Translation → Local models."
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_b4aed6446509",
+    "parts": [
+      "Model '",
+      "' is not installed on this Ollama server. Install it in Ollama, then Refresh."
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_1f6e293a1ff1",
+    "parts": [
+      "Preview simulation succeeded (no request sent) · ",
+      "s · sample result: ",
+      ""
+    ],
+    "slots": [
+      "arg0",
+      "arg1"
+    ]
+  },
+  {
+    "key": "m_6af6b4b256c9",
+    "parts": [
+      "Translation service HTTP ",
+      "; credentials and request content omitted"
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_7ee72407e301",
+    "parts": [
+      "Model pack ",
+      " is missing or corrupt; download/verify it in Settings"
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_1c95717b2de4",
+    "parts": [
+      "Download or verify ",
+      " in Settings → Translation → Local models."
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_c68cff903db9",
+    "parts": [
+      "Permanently delete ",
+      "? Linked originals will remain on disk."
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_6d6fe0f958e2",
+    "parts": [
+      "",
+      " / ",
+      " translations saved · ",
+      " missing; originals preserved"
+    ],
+    "slots": [
+      "arg0",
+      "arg1",
+      "arg2"
+    ]
+  },
+  {
+    "key": "m_a8b89d3f899e",
+    "parts": [
+      "",
+      " regions need review; select their boxes for details"
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_110409efda59",
+    "parts": [
+      "Reads dialogue images and text · $",
+      "/1M input tokens."
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_6859fb4e9e9a",
+    "parts": [
+      "Model directory contains a linked folder or file: ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_244d66bcb370",
+    "parts": [
+      "Reparse points are not allowed in owned storage: ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_20294d359ca3",
+    "parts": [
+      "Linked paths are not allowed in owned storage: ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_44b609f31c9d",
+    "parts": [
+      "Cleaned background saved · ",
+      " regions need review"
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_c27f936d64b8",
+    "parts": [
+      "Translates recognized text · $",
+      "/1M input tokens."
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_51c9176b5f77",
+    "parts": [
+      "Text translation · ",
+      " GiB on the selected server."
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_a6b196655c52",
+    "parts": [
+      "Installed model · ",
+      " GiB on the selected server."
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_70d8192048a4",
+    "parts": [
+      "Image and text · ",
+      " GiB on the selected server."
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_4a1c59e1e474",
+    "parts": [
+      "Capabilities not listed · $",
+      "/1M input tokens."
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_1d687ee7a0f3",
+    "parts": [
+      "Model directory contains an external link: ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_c9a63fdc328b",
+    "parts": [
+      "Partial import preserved for recovery: ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_c75fb799ce0e",
+    "parts": [
+      "Copied file differs from its source: ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_c04602bc59bd",
+    "parts": [
+      "Download or verify ",
+      " in Local models."
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_50d0198c49c3",
+    "parts": [
+      "Embedded asset failed verification: ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_c41072ca6f3e",
+    "parts": [
+      "Test succeeded · ",
+      "s · sample result: ",
+      ""
+    ],
+    "slots": [
+      "arg0",
+      "arg1"
+    ]
+  },
+  {
+    "key": "m_9cf75cee5e06",
+    "parts": [
+      "Check the service endpoint: ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_3f840b1116fc",
+    "parts": [
+      "",
+      " recognized regions saved · ",
+      ""
+    ],
+    "slots": [
+      "arg0",
+      "arg1"
+    ]
+  },
+  {
+    "key": "m_9342cd7a83b8",
+    "parts": [
+      "Download model pack ",
+      " first"
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_13e299d1122f",
+    "parts": [
+      "Unexpected output length ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_8609042138b3",
+    "parts": [
+      "Region ",
+      " must be a string"
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_93d5458bbb5b",
+    "parts": [
+      "Cannot load bundled ",
+      ": ",
+      ""
+    ],
+    "slots": [
+      "arg0",
+      "arg1"
+    ]
+  },
+  {
+    "key": "m_180bfec12500",
+    "parts": [
+      "",
+      " / ",
+      " translations saved"
+    ],
+    "slots": [
+      "arg0",
+      "arg1"
+    ]
+  },
+  {
+    "key": "m_a5dbbc5ca06b",
+    "parts": [
+      "",
+      " cleanup job(s) added.",
+      ""
+    ],
+    "slots": [
+      "arg0",
+      "arg1"
+    ]
+  },
+  {
+    "key": "m_1cdbb026a37d",
+    "parts": [
+      "Unsupported source: ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_5fb3416fc456",
+    "parts": [
+      "Batch ",
+      " / ",
+      " · ",
+      " regions"
+    ],
+    "slots": [
+      "arg0",
+      "arg1",
+      "arg2"
+    ]
+  },
+  {
+    "key": "m_32f214e492f6",
+    "parts": [
+      "Could not save job: ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_63731a44b6c3",
+    "parts": [
+      "Duplicate skipped: ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_af7d6ce2d8de",
+    "parts": [
+      "Unknown model pack ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_fbf6b0f463ad",
+    "parts": [
+      "Read ",
+      " from page one"
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_b11e9a3a62a6",
+    "parts": [
+      "Batch ",
+      " / ",
+      " · ",
+      " region"
+    ],
+    "slots": [
+      "arg0",
+      "arg1",
+      "arg2"
+    ]
+  },
+  {
+    "key": "m_c83c3cb22c23",
+    "parts": [
+      "View chapters in ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_fd91941eafa8",
+    "parts": [
+      "Move ",
+      " pages from ",
+      ""
+    ],
+    "slots": [
+      "count",
+      "title"
+    ]
+  },
+  {
+    "key": "m_4fc3a311a68f",
+    "parts": [
+      "",
+      " other page jobs"
+    ],
+    "slots": [
+      "count"
+    ]
+  },
+  {
+    "key": "m_bfd852ae1ac3",
+    "parts": [
+      "This computer · ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_3acdcb308927",
+    "parts": [
+      "Ollama server · ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_8ebf1f9eedb3",
+    "parts": [
+      "",
+      " jobs scheduled"
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_142d86ecdb18",
+    "parts": [
+      "",
+      " other page job"
+    ],
+    "slots": [
+      "count"
+    ]
+  },
+  {
+    "key": "m_caff7f88a09f",
+    "parts": [
+      "",
+      " regions saved"
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_1c5917472091",
+    "parts": [
+      "Add images to ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_5b23b9cf5d33",
+    "parts": [
+      "Options for ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_56f98e440191",
+    "parts": [
+      "Edit region ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_56c384a669e6",
+    "parts": [
+      "",
+      "/",
+      " translated"
+    ],
+    "slots": [
+      "arg0",
+      "arg1"
+    ]
+  },
+  {
+    "key": "m_3b43f75f7227",
+    "parts": [
+      "",
+      " jobs paused"
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_c786e065661b",
+    "parts": [
+      "",
+      " jobs added."
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_33f7e8106a68",
+    "parts": [
+      "",
+      " · page ",
+      " of ",
+      ""
+    ],
+    "slots": [
+      "arg0",
+      "arg1",
+      "arg2"
+    ]
+  },
+  {
+    "key": "m_e6677ab0aaaa",
+    "parts": [
+      "",
+      " jobs added"
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_ec7b62faf876",
+    "parts": [
+      "Step ",
+      " of ",
+      ": ",
+      ""
+    ],
+    "slots": [
+      "arg0",
+      "arg1",
+      "arg2"
+    ]
+  },
+  {
+    "key": "m_365d2c404a56",
+    "parts": [
+      "Stopping ",
+      "…"
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_cb3be3075354",
+    "parts": [
+      "",
+      " · tile ",
+      "/",
+      ""
+    ],
+    "slots": [
+      "arg0",
+      "arg1",
+      "arg2"
+    ]
+  },
+  {
+    "key": "m_ac3bf4cede2b",
+    "parts": [
+      "Export · ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_0a5ea2825819",
+    "parts": [
+      "",
+      " chapters"
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_ba5f1e514659",
+    "parts": [
+      "",
+      " chapters"
+    ],
+    "slots": [
+      "count"
+    ]
+  },
+  {
+    "key": "m_095e972b309a",
+    "parts": [
+      "",
+      " options"
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_15464d5c3dfa",
+    "parts": [
+      "",
+      " chapter"
+    ],
+    "slots": [
+      "count"
+    ]
+  },
+  {
+    "key": "m_82c7503bac1e",
+    "parts": [
+      "",
+      " review"
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_7147080b31a2",
+    "parts": [
+      "",
+      "/",
+      " read"
+    ],
+    "slots": [
+      "arg0",
+      "arg1"
+    ]
+  },
+  {
+    "key": "m_188586bcd737",
+    "parts": [
+      "",
+      " books"
+    ],
+    "slots": [
+      "count"
+    ]
+  },
+  {
+    "key": "m_d46e57d6ac42",
+    "parts": [
+      "",
+      " pages"
+    ],
+    "slots": [
+      "count"
+    ]
+  },
+  {
+    "key": "m_1c0d337c73ef",
+    "parts": [
+      "Open ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_287f54fe8dba",
+    "parts": [
+      "Page ",
+      ""
+    ],
+    "slots": [
+      "arg0"
+    ]
+  },
+  {
+    "key": "m_d08e2615a0ff",
+    "parts": [
+      "",
+      " book"
+    ],
+    "slots": [
+      "count"
+    ]
+  },
+  {
+    "key": "m_39a17a750216",
+    "parts": [
+      "",
+      " jobs"
+    ],
+    "slots": [
+      "count"
+    ]
+  },
+  {
+    "key": "m_49bd2f7a647f",
+    "parts": [
+      "",
+      " page"
+    ],
+    "slots": [
+      "count"
+    ]
+  },
+  {
+    "key": "m_1e01744f2d62",
+    "parts": [
+      "",
+      " job"
+    ],
+    "slots": [
+      "count"
+    ]
+  },
+  {
+    "key": "auto_terms_added",
+    "parts": [
+      "",
+      " terms added"
+    ],
+    "slots": [
+      "count"
+    ]
+  },
+  {
+    "key": "auto_glossary_warning",
+    "parts": [
+      "Glossary detection unavailable; continuing with existing terms. ",
+      ""
+    ],
+    "slots": [
+      "detail"
+    ]
+  },
+  {
+    "key": "auto_batch",
+    "parts": [
+      "Batch ",
+      " / ",
+      ""
+    ],
+    "slots": [
+      "current",
+      "total"
+    ]
+  },
+  {
+    "key": "m_7feb0d5c97fb",
+    "parts": [
+      "Region ",
+      " / ",
+      ""
+    ],
+    "slots": [
+      "arg0",
+      "arg1"
+    ]
+  },
+  {
+    "key": "glossary.skipped_rows",
+    "parts": [
+      "Skipped ",
+      " invalid glossary rows; valid terms were kept."
+    ],
+    "slots": [
+      "count"
+    ]
+  }
+]

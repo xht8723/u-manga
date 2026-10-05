@@ -1,0 +1,132 @@
+# App source and the existing build pipeline only. Root additions are ignored
+# unless explicitly included below.
+/*
+!/.gitignore
+# Public app introduction; internal documentation remains local.
+!/README.md
+!/README.zh-CN.md
+!/Cargo.toml
+!/Cargo.lock
+!/package.json
+!/pnpm-lock.yaml
+!/pnpm-workspace.yaml
+!/index.html
+!/svelte.config.js
+!/tsconfig.json
+!/vite.config.ts
+!/vitest.config.ts
+
+# Frontend and build-validation tests invoked by scripts/build.ps1.
+!/src/
+!/resources/
+
+# Native application, capabilities, and icons. Exclude generated Tauri schemas.
+!/src-tauri/
+/src-tauri/*
+!/src-tauri/Cargo.toml
+!/src-tauri/build.rs
+!/src-tauri/tauri.conf.json
+!/src-tauri/src/
+!/src-tauri/capabilities/
+!/src-tauri/icons/
+
+# Cargo sources, build-validation tests, and explicitly declared targets.
+!/crates/
+/crates/*
+!/crates/core/
+/crates/core/*
+!/crates/core/Cargo.toml
+!/crates/core/src/
+!/crates/core/tests/
+!/crates/core/examples/
+/crates/core/examples/*
+!/crates/core/examples/simple_translation_compare.rs
+!/crates/core/examples/whole_page_compare.rs
+!/crates/core/examples/outline_samples.rs
+!/crates/core/examples/audit_glossary.rs
+
+# Compile-time fixtures referenced by the explicitly declared Cargo examples.
+!/benchmarks/
+/benchmarks/*
+!/benchmarks/raw-translation/
+/benchmarks/raw-translation/*
+!/benchmarks/raw-translation/cases.json
+!/benchmarks/simple-batch-retest/
+/benchmarks/simple-batch-retest/*
+!/benchmarks/simple-batch-retest/cases.json
+
+# Patched dependency source and redistribution licenses, not upstream docs.
+!/vendor/
+/vendor/*
+!/vendor/genai/
+/vendor/genai/*
+!/vendor/genai/Cargo.toml
+!/vendor/genai/src/
+!/vendor/genai/LICENSE-APACHE
+!/vendor/genai/LICENSE-MIT
+
+# Exact bundled assets. Optional model downloads remain local. The build embeds
+# compressed runtimes; its PDF import checks also load the uncompressed PDF DLL.
+!/assets/
+/assets/*
+!/assets/models.json
+!/assets/thinking-models.json
+!/assets/runtime-manifest.json
+!/assets/fonts/
+/assets/fonts/*
+!/assets/fonts/NotoSansCJK-Regular.ttc
+!/assets/fonts/NotoSansArabic.ttf
+!/assets/fonts/NotoSansDevanagari.ttf
+!/assets/licenses/
+!/assets/runtime/
+/assets/runtime/*
+!/assets/runtime/*.dll.gz
+!/assets/runtime/pdfium.dll
+!/assets/models/
+/assets/models/*
+!/assets/models/rtdetr_int8/
+/assets/models/rtdetr_int8/*
+!/assets/models/rtdetr_int8/detector-v4-s_int8.onnx
+
+# Asset preparation, notices, and the portable build/publish workflow.
+!/scripts/
+/scripts/*
+!/scripts/bootstrap.py
+!/scripts/notices.py
+!/scripts/build.ps1
+!/scripts/publish-executable.ps1
+!/scripts/cleanup-build-storage.ps1
+
+# Exclude local instructions, secrets, user content, and generated files even
+# when placed beneath an included source directory.
+AGENTS.md
+CLAUDE.md
+.agents/
+.codex/
+.claude/
+docs/
+doc/
+node_modules/
+target/
+dist/
+.cache/
+test-output/
+release/
+__pycache__/
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+*.p12
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*.pyc
+*.umanga
+*.umanga-*
+*.umanga-data/
+.DS_Store
+Thumbs.db

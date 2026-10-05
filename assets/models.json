@@ -1,0 +1,402 @@
+[
+  {
+    "id": "rtdetr_int8",
+    "name": "RT-DETR small v4",
+    "kind": "detector",
+    "languages": [],
+    "license": "Apache-2.0",
+    "revision": "16e8a622f91fabc6b5b65c96d32d1183f8843546",
+    "files": [
+      {
+        "name": "detector-v4-s_int8.onnx",
+        "url": "https://huggingface.co/ogkalu/comic-text-and-bubble-detector/resolve/16e8a622f91fabc6b5b65c96d32d1183f8843546/detector-v4-s_int8.onnx",
+        "sha256": "5fe9e4f576e49d4e7e8b0e029d6d3cdc252abd4694113e1cae120e62c931ea79",
+        "bytes": 11120765
+      }
+    ],
+    "distribution": "bundled",
+    "description": "Small, fast dialogue detector included with U-Manga."
+  },
+  {
+    "id": "manga_ocr_onnx",
+    "name": "Manga OCR Japanese",
+    "kind": "manga",
+    "languages": [
+      "ja"
+    ],
+    "license": "Apache-2.0",
+    "revision": "24b12778d85800835e2ca409236de281b8ab7b9f",
+    "files": [
+      {
+        "name": "encoder_model.onnx",
+        "url": "https://huggingface.co/mayocream/manga-ocr-onnx/resolve/24b12778d85800835e2ca409236de281b8ab7b9f/encoder_model.onnx",
+        "sha256": "15fa8155fe9bc1a7d25d9bb353debaa4def033d0174e907dbd2dd6d995def85f",
+        "bytes": 343454249
+      },
+      {
+        "name": "decoder_model.onnx",
+        "url": "https://huggingface.co/mayocream/manga-ocr-onnx/resolve/24b12778d85800835e2ca409236de281b8ab7b9f/decoder_model.onnx",
+        "sha256": "ef7765261e9d1cdc34d89356986c2bbc2a082897f753a89605ae80fdfa61f5e8",
+        "bytes": 117480262
+      },
+      {
+        "name": "vocab.txt",
+        "url": "https://huggingface.co/mayocream/manga-ocr-onnx/resolve/24b12778d85800835e2ca409236de281b8ab7b9f/vocab.txt",
+        "sha256": "5cb5c5586d98a2f331d9f8828e4586479b0611bfba5d8c3b6dadffc84d6a36a3",
+        "bytes": 30216
+      },
+      {
+        "name": "config.json",
+        "url": "https://huggingface.co/mayocream/manga-ocr-onnx/resolve/24b12778d85800835e2ca409236de281b8ab7b9f/config.json",
+        "sha256": "fda165bab7a9cd1b4a0ce57ed9a78e516f101fcd23afd9f58c9e779c9b5ed11b",
+        "bytes": 77161
+      },
+      {
+        "name": "preprocessor_config.json",
+        "url": "https://huggingface.co/mayocream/manga-ocr-onnx/resolve/24b12778d85800835e2ca409236de281b8ab7b9f/preprocessor_config.json",
+        "sha256": "ee6588147df4bcd5ca13110900697f7b43b64f07da18a4427fa0d88eae857326",
+        "bytes": 376
+      }
+    ],
+    "distribution": "download",
+    "description": "Specialized recognition for Japanese manga text."
+  },
+  {
+    "id": "pp_det",
+    "name": "PP-OCRv5 text lines",
+    "kind": "line-detector",
+    "languages": [],
+    "license": "Apache-2.0",
+    "revision": "e6f4fa85f00e168c862bc462aebca69eef9b3d3d",
+    "files": [
+      {
+        "name": "inference.onnx",
+        "url": "https://huggingface.co/PaddlePaddle/PP-OCRv5_mobile_det_onnx/resolve/e6f4fa85f00e168c862bc462aebca69eef9b3d3d/inference.onnx",
+        "sha256": "a431985659dc921974177a95adcfbb90fd9e51989a5e04d70d0b75f597b6e61d",
+        "bytes": 4826518
+      },
+      {
+        "name": "inference.yml",
+        "url": "https://huggingface.co/PaddlePaddle/PP-OCRv5_mobile_det_onnx/resolve/e6f4fa85f00e168c862bc462aebca69eef9b3d3d/inference.yml",
+        "sha256": "98069072e1b6b37d727fd9d9f11725faa46d6ea0de012f2ed26caea011c37699",
+        "bytes": 903
+      }
+    ],
+    "distribution": "download",
+    "description": "Finds individual text lines for PP-OCRv5."
+  },
+  {
+    "id": "pp_cjk",
+    "name": "PP-OCRv5 cjk",
+    "kind": "recognizer",
+    "languages": [
+      "zh",
+      "zh-Hans",
+      "zh-Hant",
+      "ja"
+    ],
+    "license": "Apache-2.0",
+    "revision": "ed152b8b495f84de93cda5709d768548a9127622",
+    "files": [
+      {
+        "name": "inference.onnx",
+        "url": "https://huggingface.co/PaddlePaddle/PP-OCRv5_mobile_rec_onnx/resolve/ed152b8b495f84de93cda5709d768548a9127622/inference.onnx",
+        "sha256": "da72dc72ca4dc220df0dfde68c1dedc31c58d3e76a25871122e5056227d50092",
+        "bytes": 16534782
+      },
+      {
+        "name": "inference.yml",
+        "url": "https://huggingface.co/PaddlePaddle/PP-OCRv5_mobile_rec_onnx/resolve/ed152b8b495f84de93cda5709d768548a9127622/inference.yml",
+        "sha256": "5dfeb2777f6d0db8177d8128a8acfcf6e6276dc4ac73ea3bf0dc06d6a5e85d8e",
+        "bytes": 148345
+      }
+    ],
+    "distribution": "download",
+    "description": "Reads Chinese and Japanese text one line at a time."
+  },
+  {
+    "id": "pp_latin",
+    "name": "PP-OCRv5 latin",
+    "kind": "recognizer",
+    "languages": [
+      "en",
+      "fr",
+      "de",
+      "es",
+      "pt",
+      "it",
+      "vi",
+      "pl",
+      "tr",
+      "nl",
+      "id",
+      "ms",
+      "ro",
+      "sv",
+      "da",
+      "fi",
+      "cs"
+    ],
+    "license": "Apache-2.0",
+    "revision": "89d3a50e2c27e2e7cceeab0e944c25c807d5db4f",
+    "files": [
+      {
+        "name": "inference.onnx",
+        "url": "https://huggingface.co/PaddlePaddle/latin_PP-OCRv5_mobile_rec_onnx/resolve/89d3a50e2c27e2e7cceeab0e944c25c807d5db4f/inference.onnx",
+        "sha256": "7888113072263cb471b93f66dd5e2ad70548dc526fa1ace760d0d973dd121498",
+        "bytes": 8042023
+      },
+      {
+        "name": "inference.yml",
+        "url": "https://huggingface.co/PaddlePaddle/latin_PP-OCRv5_mobile_rec_onnx/resolve/89d3a50e2c27e2e7cceeab0e944c25c807d5db4f/inference.yml",
+        "sha256": "0bbe984570f597af3638e50bdf2e8276f3ab26a61966096538b3b0d1849f5c84",
+        "bytes": 6817
+      }
+    ],
+    "distribution": "download",
+    "description": "Reads Latin-script languages, including English, French and German."
+  },
+  {
+    "id": "pp_korean",
+    "name": "PP-OCRv5 korean",
+    "kind": "recognizer",
+    "languages": [
+      "ko"
+    ],
+    "license": "Apache-2.0",
+    "revision": "5c6f574b8e2230adf4287b33e736d71b9fabd28e",
+    "files": [
+      {
+        "name": "inference.onnx",
+        "url": "https://huggingface.co/PaddlePaddle/korean_PP-OCRv5_mobile_rec_onnx/resolve/5c6f574b8e2230adf4287b33e736d71b9fabd28e/inference.onnx",
+        "sha256": "92f0b7785e64fc9090106a241cf4c1eb97472824558272751b88a2a4476d3a08",
+        "bytes": 13418787
+      },
+      {
+        "name": "inference.yml",
+        "url": "https://huggingface.co/PaddlePaddle/korean_PP-OCRv5_mobile_rec_onnx/resolve/5c6f574b8e2230adf4287b33e736d71b9fabd28e/inference.yml",
+        "sha256": "f757fa1c40e99edcf27e9cce879b93eb2a51fa46f5ef39095689b8c37dd75998",
+        "bytes": 96039
+      }
+    ],
+    "distribution": "download",
+    "description": "Reads Korean text one line at a time."
+  },
+  {
+    "id": "pp_cyrillic",
+    "name": "PP-OCRv5 cyrillic",
+    "kind": "recognizer",
+    "languages": [
+      "ru",
+      "uk",
+      "bg",
+      "sr"
+    ],
+    "license": "Apache-2.0",
+    "revision": "2cef88145434beb8afa9dd82d77d799eb1ad7b29",
+    "files": [
+      {
+        "name": "inference.onnx",
+        "url": "https://huggingface.co/PaddlePaddle/cyrillic_PP-OCRv5_mobile_rec_onnx/resolve/2cef88145434beb8afa9dd82d77d799eb1ad7b29/inference.onnx",
+        "sha256": "5371ee1ddaa7983cc62d0818d99e982b6804638c85e4f960d59a574094e172e5",
+        "bytes": 8048799
+      },
+      {
+        "name": "inference.yml",
+        "url": "https://huggingface.co/PaddlePaddle/cyrillic_PP-OCRv5_mobile_rec_onnx/resolve/2cef88145434beb8afa9dd82d77d799eb1ad7b29/inference.yml",
+        "sha256": "5c76cc91fa98410178a09f498db10050d0ec1634a660053d3005ab7be581f501",
+        "bytes": 6991
+      }
+    ],
+    "distribution": "download",
+    "description": "Reads Cyrillic languages, including Russian and Ukrainian."
+  },
+  {
+    "id": "pp_arabic",
+    "name": "PP-OCRv5 arabic",
+    "kind": "recognizer",
+    "languages": [
+      "ar",
+      "fa",
+      "ur"
+    ],
+    "license": "Apache-2.0",
+    "revision": "14aaedcd75825982689ecf5cd64ab33ee083215a",
+    "files": [
+      {
+        "name": "inference.onnx",
+        "url": "https://huggingface.co/PaddlePaddle/arabic_PP-OCRv5_mobile_rec_onnx/resolve/14aaedcd75825982689ecf5cd64ab33ee083215a/inference.onnx",
+        "sha256": "799113ebf267fbe742deb99eb36e8d42c9ddc5291ceacf92add41b4d52a59110",
+        "bytes": 7998947
+      },
+      {
+        "name": "inference.yml",
+        "url": "https://huggingface.co/PaddlePaddle/arabic_PP-OCRv5_mobile_rec_onnx/resolve/14aaedcd75825982689ecf5cd64ab33ee083215a/inference.yml",
+        "sha256": "21368419e6c016c31db55d316d59e11c128e1913e6e6fe10287084710043d3a6",
+        "bytes": 6165
+      }
+    ],
+    "distribution": "download",
+    "description": "Reads Arabic, Persian and Urdu text one line at a time."
+  },
+  {
+    "id": "pp_devanagari",
+    "name": "PP-OCRv5 devanagari",
+    "kind": "recognizer",
+    "languages": [
+      "hi",
+      "mr",
+      "ne"
+    ],
+    "license": "Apache-2.0",
+    "revision": "251aec19e36739540d35e2cc943f6aa7503b98e5",
+    "files": [
+      {
+        "name": "inference.onnx",
+        "url": "https://huggingface.co/PaddlePaddle/devanagari_PP-OCRv5_mobile_rec_onnx/resolve/251aec19e36739540d35e2cc943f6aa7503b98e5/inference.onnx",
+        "sha256": "cb789212ce96c69d3e74728ae4309d179281d68cb3945d0616b67cafab41c986",
+        "bytes": 7912311
+      },
+      {
+        "name": "inference.yml",
+        "url": "https://huggingface.co/PaddlePaddle/devanagari_PP-OCRv5_mobile_rec_onnx/resolve/251aec19e36739540d35e2cc943f6aa7503b98e5/inference.yml",
+        "sha256": "9bd172dd26440c8ce94d1cde5d5baea6aefdc7cf3c5c8492e0beedef656d4e54",
+        "bytes": 5027
+      }
+    ],
+    "distribution": "download",
+    "description": "Reads Hindi, Marathi and Nepali text one line at a time."
+  },
+  {
+    "id": "pp_thai",
+    "name": "PP-OCRv5 thai",
+    "kind": "recognizer",
+    "languages": [
+      "th"
+    ],
+    "license": "Apache-2.0",
+    "revision": "1d4adbbafb1034a2fd6618498575b81ea7b69f69",
+    "files": [
+      {
+        "name": "inference.onnx",
+        "url": "https://huggingface.co/PaddlePaddle/th_PP-OCRv5_mobile_rec_onnx/resolve/1d4adbbafb1034a2fd6618498575b81ea7b69f69/inference.onnx",
+        "sha256": "27618be66018f8598ac0a526a593f9f1cebf794e7eded93428e8fb016e537f5f",
+        "bytes": 7891015
+      },
+      {
+        "name": "inference.yml",
+        "url": "https://huggingface.co/PaddlePaddle/th_PP-OCRv5_mobile_rec_onnx/resolve/1d4adbbafb1034a2fd6618498575b81ea7b69f69/inference.yml",
+        "sha256": "f6ba7fefc38ca1ff398ddafa75d67d16e0b3757c4e6c833adffee98a981766c9",
+        "bytes": 4667
+      }
+    ],
+    "distribution": "download",
+    "description": "Reads Thai text one line at a time."
+  },
+  {
+    "id": "pp_greek",
+    "name": "PP-OCRv5 greek",
+    "kind": "recognizer",
+    "languages": [
+      "el"
+    ],
+    "license": "Apache-2.0",
+    "revision": "8152b89d2ee0e1d4c92decab75fe75e5e3d836b6",
+    "files": [
+      {
+        "name": "inference.onnx",
+        "url": "https://huggingface.co/PaddlePaddle/el_PP-OCRv5_mobile_rec_onnx/resolve/8152b89d2ee0e1d4c92decab75fe75e5e3d836b6/inference.onnx",
+        "sha256": "2acf17fcaea2bc81b878e311e6263b8885f48bb03796f75f9f30ed3242bbaa6d",
+        "bytes": 7808735
+      },
+      {
+        "name": "inference.yml",
+        "url": "https://huggingface.co/PaddlePaddle/el_PP-OCRv5_mobile_rec_onnx/resolve/8152b89d2ee0e1d4c92decab75fe75e5e3d836b6/inference.yml",
+        "sha256": "17d85b2fe2d2f24cd4ab07bcbc33e0c126859b956ced36e281dc65e2d0c1f0bf",
+        "bytes": 3317
+      }
+    ],
+    "distribution": "download",
+    "description": "Recognizes el text locally with PP-OCRv5."
+  },
+  {
+    "id": "pp_tamil",
+    "name": "PP-OCRv5 tamil",
+    "kind": "recognizer",
+    "languages": [
+      "ta"
+    ],
+    "license": "Apache-2.0",
+    "revision": "0db89798af0d5218fad9ea7ace0557526e9077f1",
+    "files": [
+      {
+        "name": "inference.onnx",
+        "url": "https://huggingface.co/PaddlePaddle/ta_PP-OCRv5_mobile_rec_onnx/resolve/0db89798af0d5218fad9ea7ace0557526e9077f1/inference.onnx",
+        "sha256": "c6d2b682d2a0ea4cb1fccdba295976f93fd439964d16cdc666cadef531accbee",
+        "bytes": 7885691
+      },
+      {
+        "name": "inference.yml",
+        "url": "https://huggingface.co/PaddlePaddle/ta_PP-OCRv5_mobile_rec_onnx/resolve/0db89798af0d5218fad9ea7ace0557526e9077f1/inference.yml",
+        "sha256": "88a28f5a1bb30cabe38a0985cb5e6619fa4f0c7c78e57a08274674228c5219a6",
+        "bytes": 4579
+      }
+    ],
+    "distribution": "download",
+    "description": "Reads Tamil text one line at a time."
+  },
+  {
+    "id": "inpaint_migan",
+    "name": "MI-GAN",
+    "description": "Small and fast; less reliable on complex artwork.",
+    "kind": "inpainting",
+    "distribution": "download",
+    "languages": [],
+    "license": "MIT weights; see upstream LICENSE-WEIGHTS",
+    "revision": "406830d0fa60666da0071c342ad2fbc8f30c5c64",
+    "files": [
+      {
+        "name": "migan.onnx",
+        "url": "https://huggingface.co/andraniksargsyan/migan/resolve/406830d0fa60666da0071c342ad2fbc8f30c5c64/migan.onnx",
+        "sha256": "593eba0b7e04730f1b61c0a3cbca68d97d8d6a7ff5c6a44a7b9d7fcd880fc5ae",
+        "bytes": 29546882
+      }
+    ]
+  },
+  {
+    "id": "inpaint_manga_aot",
+    "name": "Manga AOT",
+    "description": "Compact manga cleanup model with moderate speed.",
+    "kind": "inpainting",
+    "distribution": "download",
+    "languages": [],
+    "license": "MIT model declaration; no translator application code imported",
+    "revision": "42ffc84ff1bd46dd95f1c5a41e83ee7e98f39189",
+    "files": [
+      {
+        "name": "aot.onnx",
+        "url": "https://huggingface.co/ogkalu/aot-inpainting/resolve/42ffc84ff1bd46dd95f1c5a41e83ee7e98f39189/aot.onnx",
+        "sha256": "ffd39ed8e2a275869d3b49180d030f0d8b8b9c2c20ed0e099ecd207201f0eada",
+        "bytes": 23068213
+      }
+    ]
+  },
+  {
+    "id": "inpaint_manga_lama",
+    "name": "Manga LaMa",
+    "description": "Best cleanup in our tests; larger and slower.",
+    "kind": "inpainting",
+    "distribution": "download",
+    "languages": [],
+    "license": "MIT fine-tuned checkpoint declaration; ONNX repository and original LaMa Apache-2.0",
+    "revision": "ee4ed4a8447b6730fc41d34f90876b6c48af925a",
+    "files": [
+      {
+        "name": "lama-manga-dynamic.onnx",
+        "url": "https://huggingface.co/ogkalu/lama-manga-onnx-dynamic/resolve/ee4ed4a8447b6730fc41d34f90876b6c48af925a/lama-manga-dynamic.onnx",
+        "sha256": "de31ffa5ba26916b8ea35319f6c12151ff9654d4261bccf0583a69bb095315f9",
+        "bytes": 206291843
+      }
+    ]
+  }
+]

@@ -1,0 +1,155 @@
+[package]
+name = "umanga-core"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tokio.workspace = true
+sha2.workspace = true
+hex.workspace = true
+uuid.workspace = true
+reqwest.workspace = true
+image = { version = "0.25", default-features = false, features = ["png", "jpeg", "webp"] }
+imageproc = { version = "0.25", default-features = false }
+ort = { version = "=2.0.0-rc.12", default-features = false, features = ["std", "ndarray", "load-dynamic", "directml", "api-24"] }
+rusqlite = { version = "0.37", features = ["bundled"] }
+zip = { version = "4", default-features = false, features = ["deflate"] }
+pdfium-render = { version = "0.8", default-features = false, features = ["pdfium_latest", "image_025", "thread_safe"] }
+rustybuzz = "0.20"
+ttf-parser = "0.25"
+tiny-skia = "0.11"
+fontdb = "0.23"
+unicode-bidi = "0.3"
+unicode-linebreak = "0.1"
+unicode-segmentation = "1"
+# Already pinned through rustybuzz; reuse its Unicode tables for punctuation/symbols.
+unicode-properties = { version = "=0.1.4", default-features = false, features = ["general-category"] }
+base64 = "0.22"
+genai = "0.5"
+reqwest_genai = { package = "reqwest", version = "0.13", default-features = false, features = ["json", "rustls"] }
+futures-util = "0.3"
+tokio-util = "0.7"
+url = "2"
+md5 = "0.8"
+serde_yaml = "0.9"
+chrono = { version = "0.4", features = ["serde"] }
+parking_lot = "0.12"
+
+[dev-dependencies]
+tempfile = "3"
+wiremock = "0.6"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = ["Win32_Storage_FileSystem", "Win32_Foundation"] }
+
+[features]
+dev-tools = []
+
+[[example]]
+name = "simple_translation_compare"
+required-features = ["dev-tools"]
+
+[[example]]
+name = "whole_page_compare"
+required-features = ["dev-tools"]
+
+[[bin]]
+name = "hosting_fixture"
+path = "src/bin/hosting_fixture.rs"
+required-features = ["dev-tools"]
+
+[[bin]]
+name = "audit_metrics"
+path = "src/bin/audit_metrics.rs"
+required-features = ["dev-tools"]
+
+[[bin]]
+name = "benchmark_ocr"
+path = "src/bin/benchmark_ocr.rs"
+required-features = ["dev-tools"]
+
+[[bin]]
+name = "cleanup_compare"
+path = "src/bin/cleanup_compare.rs"
+required-features = ["dev-tools"]
+
+[[bin]]
+name = "cleanup_validate"
+path = "src/bin/cleanup_validate.rs"
+required-features = ["dev-tools"]
+
+[[bin]]
+name = "editor_fixture"
+path = "src/bin/editor_fixture.rs"
+required-features = ["dev-tools"]
+
+[[bin]]
+name = "inpaint_bench"
+path = "src/bin/inpaint_bench.rs"
+required-features = ["dev-tools"]
+
+[[bin]]
+name = "lettering_samples"
+path = "src/bin/lettering_samples.rs"
+required-features = ["dev-tools"]
+
+[[bin]]
+name = "lettering_validate"
+path = "src/bin/lettering_validate.rs"
+required-features = ["dev-tools"]
+
+[[bin]]
+name = "library_smoke"
+path = "src/bin/library_smoke.rs"
+required-features = ["dev-tools"]
+
+[[bin]]
+name = "quality"
+path = "src/bin/quality.rs"
+required-features = ["dev-tools"]
+
+[[bin]]
+name = "reader_fixture"
+path = "src/bin/reader_fixture.rs"
+required-features = ["dev-tools"]
+
+[[bin]]
+name = "storage_bench"
+path = "src/bin/storage_bench.rs"
+required-features = ["dev-tools"]
+
+[[bin]]
+name = "stress"
+path = "src/bin/stress.rs"
+required-features = ["dev-tools"]
+
+[[bin]]
+name = "thinking_smoke"
+path = "src/bin/thinking_smoke.rs"
+required-features = ["dev-tools"]
+
+[[bin]]
+name = "thumbnail_smoke"
+path = "src/bin/thumbnail_smoke.rs"
+required-features = ["dev-tools"]
+
+[[bin]]
+name = "validate"
+path = "src/bin/validate.rs"
+required-features = ["dev-tools"]
+
+[[bin]]
+name = "reading_order_experiment"
+path = "src/bin/reading_order_experiment.rs"
+required-features = ["dev-tools"]
+
+[[example]]
+name = "outline_samples"
+required-features = ["dev-tools"]
+
+[[example]]
+name = "audit_glossary"
+required-features = ["dev-tools"]

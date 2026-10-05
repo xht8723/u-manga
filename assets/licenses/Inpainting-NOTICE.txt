@@ -1,0 +1,247 @@
+Optional inpainting checkpoints
+These models are downloaded separately; all use the existing ONNX Runtime/DirectML libraries.
+
+
+{
+  "id": "manga_aot",
+  "repo": "ogkalu/aot-inpainting",
+  "revision": "42ffc84ff1bd46dd95f1c5a41e83ee7e98f39189",
+  "architecture": "Manga-specific AOT",
+  "source": "https://huggingface.co/ogkalu/aot-inpainting",
+  "license": "MIT model declaration; no translator application code imported",
+  "url": "https://huggingface.co/ogkalu/aot-inpainting/resolve/42ffc84ff1bd46dd95f1c5a41e83ee7e98f39189/aot.onnx",
+  "file": "models\\inpainting\\manga_aot\\aot.onnx",
+  "bytes": 23068213,
+  "sha256": "ffd39ed8e2a275869d3b49180d030f0d8b8b9c2c20ed0e099ecd207201f0eada",
+  "published_sha256": "ffd39ed8e2a275869d3b49180d030f0d8b8b9c2c20ed0e099ecd207201f0eada",
+  "status": "downloaded",
+  "downloaded_utc": "2026-09-25T00:08:48Z",
+  "verified": true,
+  "opsets": {
+    "ai.onnx": 18
+  },
+  "producer": "pytorch",
+  "producer_version": "2.8.0",
+  "inputs": [
+    {
+      "name": "image",
+      "dtype": "FLOAT",
+      "shape": [
+        "batch",
+        3,
+        "h",
+        "w"
+      ]
+    },
+    {
+      "name": "mask",
+      "dtype": "FLOAT",
+      "shape": [
+        "batch",
+        1,
+        "h",
+        "w"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "inpainted",
+      "dtype": "FLOAT",
+      "shape": [
+        "batch",
+        3,
+        "h",
+        "w"
+      ]
+    }
+  ],
+  "operators": {
+    "Identity": 22,
+    "Concat": 77,
+    "Constant": 698,
+    "ConstantOfShape": 66,
+    "Reshape": 148,
+    "Slice": 66,
+    "Transpose": 66,
+    "Cast": 92,
+    "Pad": 66,
+    "ReduceMean": 78,
+    "Sub": 82,
+    "Mul": 178,
+    "Div": 52,
+    "Max": 16,
+    "Sqrt": 26,
+    "Shape": 26,
+    "Conv": 72,
+    "Sigmoid": 18,
+    "Relu": 46,
+    "Gather": 10,
+    "ReduceProd": 10,
+    "Add": 20,
+    "ConvTranspose": 4,
+    "Clip": 1
+  }
+}
+
+{
+  "id": "manga_lama",
+  "repo": "ogkalu/lama-manga-onnx-dynamic",
+  "revision": "ee4ed4a8447b6730fc41d34f90876b6c48af925a",
+  "architecture": "Anime/Manga Big-LaMa",
+  "source": "https://huggingface.co/dreMaz/AnimeMangaInpainting",
+  "license": "MIT fine-tuned checkpoint declaration; ONNX repository and original LaMa Apache-2.0",
+  "url": "https://huggingface.co/ogkalu/lama-manga-onnx-dynamic/resolve/ee4ed4a8447b6730fc41d34f90876b6c48af925a/lama-manga-dynamic.onnx",
+  "file": "models\\inpainting\\manga_lama\\lama-manga-dynamic.onnx",
+  "bytes": 206291843,
+  "sha256": "de31ffa5ba26916b8ea35319f6c12151ff9654d4261bccf0583a69bb095315f9",
+  "published_sha256": "de31ffa5ba26916b8ea35319f6c12151ff9654d4261bccf0583a69bb095315f9",
+  "status": "downloaded",
+  "downloaded_utc": "2026-09-25T00:08:47Z",
+  "verified": true,
+  "opsets": {
+    "ai.onnx": 18
+  },
+  "producer": "pytorch",
+  "producer_version": "2.8.0",
+  "inputs": [
+    {
+      "name": "image",
+      "dtype": "FLOAT",
+      "shape": [
+        "batch",
+        3,
+        "h",
+        "w"
+      ]
+    },
+    {
+      "name": "mask",
+      "dtype": "FLOAT",
+      "shape": [
+        "batch",
+        1,
+        "h",
+        "w"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "inpainted",
+      "dtype": "FLOAT",
+      "shape": [
+        "batch",
+        3,
+        "h",
+        "w"
+      ]
+    }
+  ],
+  "operators": {
+    "Constant": 3379,
+    "Sub": 181,
+    "Mul": 291,
+    "Concat": 280,
+    "ConstantOfShape": 98,
+    "Reshape": 268,
+    "Slice": 278,
+    "Transpose": 674,
+    "Cast": 710,
+    "Pad": 98,
+    "Conv": 222,
+    "Relu": 152,
+    "Add": 325,
+    "Shape": 468,
+    "Gather": 540,
+    "Range": 252,
+    "Div": 432,
+    "Unsqueeze": 612,
+    "Cos": 144,
+    "Sin": 144,
+    "MatMul": 432,
+    "Sqrt": 144,
+    "Neg": 36,
+    "BatchNormalization": 75,
+    "ConvTranspose": 3,
+    "Sigmoid": 1
+  }
+}
+
+{
+  "id": "migan",
+  "repo": "andraniksargsyan/migan",
+  "revision": "406830d0fa60666da0071c342ad2fbc8f30c5c64",
+  "architecture": "MI-GAN Places2 512",
+  "source": "https://github.com/Picsart-AI-Research/MI-GAN",
+  "license": "MIT weights; see upstream LICENSE-WEIGHTS",
+  "url": "https://huggingface.co/andraniksargsyan/migan/resolve/406830d0fa60666da0071c342ad2fbc8f30c5c64/migan.onnx",
+  "file": "models\\inpainting\\migan\\migan.onnx",
+  "bytes": 29546882,
+  "sha256": "593eba0b7e04730f1b61c0a3cbca68d97d8d6a7ff5c6a44a7b9d7fcd880fc5ae",
+  "published_sha256": "593eba0b7e04730f1b61c0a3cbca68d97d8d6a7ff5c6a44a7b9d7fcd880fc5ae",
+  "status": "downloaded",
+  "downloaded_utc": "2026-09-25T00:08:49Z",
+  "verified": true,
+  "opsets": {
+    "ai.onnx": 12
+  },
+  "producer": "pytorch",
+  "producer_version": "1.8",
+  "inputs": [
+    {
+      "name": "image",
+      "dtype": "UINT8",
+      "shape": [
+        "batch_size",
+        3,
+        "height",
+        "width"
+      ]
+    },
+    {
+      "name": "mask",
+      "dtype": "UINT8",
+      "shape": [
+        "batch_size",
+        1,
+        "height",
+        "width"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "result",
+      "dtype": "UINT8",
+      "shape": [
+        "Castresult_dim_0",
+        3,
+        "Castresult_dim_2",
+        "Castresult_dim_3"
+      ]
+    }
+  ],
+  "operators": {
+    "Cast": 25,
+    "Shape": 5,
+    "Constant": 201,
+    "Slice": 17,
+    "Concat": 19,
+    "Resize": 17,
+    "Round": 2,
+    "Mul": 85,
+    "Div": 3,
+    "Sub": 3,
+    "Conv": 94,
+    "LeakyRelu": 65,
+    "Clip": 67,
+    "Add": 31,
+    "ConstantOfShape": 14,
+    "Reshape": 28,
+    "Transpose": 14,
+    "Pad": 14,
+    "Gather": 2,
+    "Unsqueeze": 2
+  }
+}

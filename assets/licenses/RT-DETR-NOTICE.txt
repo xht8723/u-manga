@@ -1,0 +1,8 @@
+RT-DETR small v4 INT8 comic text and speech balloon detector
+Model publisher: ogkalu
+Source: https://huggingface.co/ogkalu/comic-text-and-bubble-detector
+Pinned revision: 16e8a622f91fabc6b5b65c96d32d1183f8843546
+File: detector-v4-s_int8.onnx
+SHA-256: 5fe9e4f576e49d4e7e8b0e029d6d3cdc252abd4694113e1cae120e62c931ea79
+License declared by the publisher: Apache-2.0 (see RT-DETR-LICENSE-APACHE.txt).
+The checkpoint is redistributed without model changes; gzip compression is used for packaging.

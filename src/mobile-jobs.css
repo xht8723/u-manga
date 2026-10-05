@@ -1,0 +1,266 @@
+/* Only the hosted compact layout uses these rules; desktop Jobs retains its layout. */
+.queue-view.compact-jobs {
+  display: block;
+  padding: 12px 12px max(20px, env(safe-area-inset-bottom));
+  min-width: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.queue-view.compact-jobs .jobs-heading {
+  gap: 8px;
+}
+.queue-view.compact-jobs .jobs-heading h1 {
+  font-size: 1.2em;
+  line-height: 1.3;
+}
+.queue-view.compact-jobs .jobs-bulk {
+  gap: 6px;
+  margin-left: auto;
+}
+.queue-view.compact-jobs .jobs-bulk button {
+  padding: 8px 10px;
+  min-height: 44px;
+  gap: 6px;
+  font-size: 0.9em;
+}
+.queue-view.compact-jobs .jobs-state {
+  margin: 8px 0;
+  font-size: 0.88em;
+  overflow-wrap: anywhere;
+}
+.queue-view.compact-jobs .queue-tabs {
+  flex: none;
+  min-height: 61px;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  gap: 4px;
+  margin: 12px 0 8px;
+  padding-bottom: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  overscroll-behavior-x: contain;
+}
+.queue-view.compact-jobs .queue-tabs button {
+  flex: 0 0 auto;
+  padding: 8px 10px;
+  min-height: 44px;
+  gap: 6px;
+  font-size: 0.88em;
+  white-space: nowrap;
+}
+.queue-view.compact-jobs .queue-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+}
+.queue-view.compact-jobs .queue-search {
+  grid-column: auto;
+  margin: 0;
+}
+.queue-view.compact-jobs .queue-search > span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.queue-view.compact-jobs .queue-search > div {
+  min-height: 44px;
+  padding-left: 10px;
+}
+.queue-view.compact-jobs .queue-search input {
+  min-width: 0;
+  font-size: max(16px, 1em);
+}
+.queue-view.compact-jobs .jobs-filter-toggle {
+  min-height: 44px;
+  padding: 8px 10px;
+  gap: 6px;
+  font-size: 0.9em;
+}
+.queue-view.compact-jobs .jobs-filter-toggle[aria-expanded='true'] {
+  border-color: var(--accent);
+  background: var(--selection);
+}
+.queue-view.compact-jobs .jobs-filter-count {
+  color: var(--accent);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.queue-view.compact-jobs .jobs-advanced-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12em), 1fr));
+  grid-column: 1 / -1;
+  gap: 8px 12px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+}
+.queue-view.compact-jobs .jobs-advanced-filters[hidden],
+.queue-view.compact-jobs .job-expanded-details[hidden] {
+  display: none;
+}
+.queue-view.compact-jobs .jobs-advanced-filters label {
+  margin: 0;
+  font-size: 0.88em;
+}
+.queue-view.compact-jobs .jobs-filter-clear {
+  justify-self: start;
+  min-height: 44px;
+}
+.queue-view.compact-jobs .queue-results {
+  min-height: 42px;
+  gap: 6px 10px;
+  flex-wrap: wrap;
+  padding: 4px 0;
+  font-size: 0.85em;
+}
+.queue-view.compact-jobs .queue-results button {
+  min-height: 44px;
+}
+.queue-view.compact-jobs .queue-pagination {
+  min-width: 0;
+  gap: 8px;
+  max-width: 100%;
+  padding: 0;
+}
+.queue-view.compact-jobs .queue-pagination > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.queue-view.compact-jobs .queue-job {
+  padding: 12px;
+  margin-bottom: 10px;
+  min-width: 0;
+}
+.queue-view.compact-jobs .job-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+}
+.queue-view.compact-jobs .job-identity {
+  grid-column: 1;
+  grid-row: 1;
+}
+.queue-view.compact-jobs .job-identity h2 {
+  margin: 0;
+  font-size: 1em;
+}
+.queue-view.compact-jobs .job-identity p {
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  margin: 4px 0 0;
+  font-size: 0.82em;
+}
+.queue-view.compact-jobs .job-identity p span:first-child {
+  max-width: 100%;
+}
+.queue-view.compact-jobs .job-status {
+  grid-column: 1;
+  grid-row: 2;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  padding: 3px 8px;
+  font-size: 0.78em;
+}
+.queue-view.compact-jobs .job-details-toggle {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  padding: 8px;
+  width: 44px;
+  min-height: 44px;
+  border-color: transparent;
+  background: transparent;
+  color: var(--muted);
+}
+.queue-view.compact-jobs .job-details-toggle[aria-expanded='true'] svg {
+  transform: rotate(180deg);
+}
+.queue-view.compact-jobs .job-actions {
+  grid-column: 2;
+  grid-row: 2;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.queue-view.compact-jobs .job-actions button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px;
+}
+.queue-view.compact-jobs .job-actions button > span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.queue-view.compact-jobs .job-progress {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 6px 10px;
+  margin: 8px 0 0;
+  font-size: 0.85em;
+}
+.queue-view.compact-jobs .job-stage {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+}
+.queue-view.compact-jobs .queue-job:not(.job-expanded) .step-count {
+  display: none;
+}
+.queue-view.compact-jobs .job-steps,
+.queue-view.compact-jobs .job-progress > small {
+  grid-column: 1 / -1;
+  max-width: none;
+}
+.queue-view.compact-jobs .job-progress > small {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.queue-view.compact-jobs .job-expanded-details {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.queue-view.compact-jobs .job-details {
+  gap: 6px 12px;
+}
+.queue-view.compact-jobs .job-error {
+  font-size: 0.88em;
+  margin: 8px 0 0;
+}
+.queue-view.compact-jobs .queue-job:not(.job-expanded) .job-error {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+.queue-view.compact-jobs .job-warnings summary {
+  min-height: 44px;
+  align-content: center;
+}
+.queue-view.compact-jobs .queue-empty {
+  padding: 36px 12px;
+}
+.queue-view.compact-jobs .host-jobs-history {
+  padding: 8px 0;
+}

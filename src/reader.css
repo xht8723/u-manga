@@ -1,0 +1,253 @@
+.reader-controls {
+  position: relative;
+  flex: none;
+  z-index: 20;
+}
+.reader-translation-control {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+}
+.reader-translation-help {
+  display: none;
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: min(300px, 65vw);
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: 0 6px 20px #0003;
+  font-size: 0.9em;
+  z-index: 30;
+}
+.reader-translation-control:hover .reader-translation-help,
+.reader-translation-control:focus-within .reader-translation-help {
+  display: block;
+}
+.reader-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+  padding: 6px 12px;
+  min-height: 48px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+.reader-toolbar > button {
+  border: 0;
+  background: transparent;
+  padding: 7px 10px;
+  min-height: 34px;
+}
+.reader-toolbar > button:hover {
+  background: var(--raised);
+}
+.reader-tool-spacer {
+  flex: 1;
+}
+.reader-toolbar .page-counter {
+  font-variant-numeric: tabular-nums;
+  min-width: 85px;
+}
+.reader-options {
+  position: absolute;
+  right: 10px;
+  top: calc(100% + 6px);
+  width: min(350px, calc(100vw - 24px));
+  max-height: calc(100vh - 74px);
+  overflow: auto;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+  box-shadow: 0 14px 40px #0005;
+  color: var(--text);
+}
+.reader-options > label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0;
+  font-size: 0.95em;
+}
+.reader-option-actions {
+  display: grid;
+  gap: 5px;
+}
+.reader-option-actions button {
+  justify-content: flex-start;
+  background: transparent;
+  border: 0;
+  padding: 9px 8px;
+  white-space: normal;
+  text-align: left;
+}
+.reader-option-actions button:hover {
+  background: var(--raised);
+}
+.reader-option-actions small {
+  margin-left: auto;
+}
+.reader-option-actions.secondary {
+  border-top: 1px solid var(--border);
+  margin-top: 12px;
+  padding-top: 10px;
+}
+.reader-canvas:focus {
+  outline: none;
+}
+.reader-canvas:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+.reader-canvas .paper > img {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.editor-navigation {
+  padding: 6px 12px;
+  gap: 8px;
+}
+.editor-navigation > button,
+.editor-page-navigation > button {
+  border: 0;
+  background: transparent;
+  padding: 7px 10px;
+}
+.editor-navigation > button:hover,
+.editor-page-navigation > button:hover {
+  background: var(--raised);
+}
+.editor-chapter-name {
+  flex: 1;
+  min-width: 60px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--muted);
+}
+.editor-view-toggle[aria-pressed='true'] {
+  background: var(--selection);
+}
+.editor-page-navigation {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.editor-navigation .zoom {
+  flex: 0 1 200px;
+  min-width: 125px;
+}
+.editor-navigation .zoom input {
+  min-width: 60px;
+}
+@media (max-width: 700px) {
+  .reader-toolbar {
+    padding: 4px;
+    gap: 1px;
+  }
+  .reader-toolbar > button {
+    padding: 7px;
+  }
+}
+
+/* Editor drafts and per-page pipeline status share the active appearance. */
+.editor-fields {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+.page-job {
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 10px;
+  margin-bottom: 16px;
+  font-size: 0.86em;
+}
+.page-job-heading {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.page-job-heading > span {
+  color: var(--muted);
+}
+.page-job-actions {
+  display: flex;
+  min-height: 26px;
+  margin-left: auto;
+  gap: 2px;
+}
+.page-job-actions button {
+  padding: 5px;
+}
+.page-job-steps {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+}
+.page-job-steps li {
+  display: flex;
+  gap: 7px;
+  padding: 4px 0;
+}
+.page-job-steps li > div {
+  min-width: 0;
+}
+.page-job-steps small {
+  display: block;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.page-job-steps .step-detail {
+  /* Reserve the usual two lines before a checkpoint supplies its detail. */
+  min-height: 3.2em;
+}
+.page-job-steps .error-text {
+  margin: 4px 0;
+  overflow-wrap: anywhere;
+}
+.step-icon {
+  flex: 0 0 14px;
+  color: var(--accent);
+}
+.step-error .step-icon {
+  color: var(--warning);
+}
+.page-job-steps [aria-current='step'] > div > span {
+  font-weight: 650;
+}
+.spin {
+  animation: editor-spin 1s linear infinite;
+}
+@keyframes editor-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spin {
+    animation: none;
+  }
+}
+
+.editor-progress-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.editor-progress-tools .editor-glossary {
+  min-height: 32px;
+  padding: 5px 10px;
+  font-size: 0.85em;
+  gap: 6px;
+  border-radius: 8px;
+}
