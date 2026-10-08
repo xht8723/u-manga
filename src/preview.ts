@@ -40,7 +40,7 @@ const credentials = JSON.parse(localStorage.getItem(prefsKey + '-credentials') |
 const verified = JSON.parse(localStorage.getItem(prefsKey + '-models') || '[]') as string[];
 const downloading = new Map<string, { cancelled: boolean }>();
 const key =
-  'umanga-library-preview-v19' +
+  'umanga-library-preview-v20' +
   (['reader-cleanup', 'editor-progress', 'manual-progress', 'navigation'].includes(fixture)
     ? `-${fixture}`
     : '');
@@ -388,6 +388,9 @@ function makePreviewJob(
   };
   return {
     fresh,
+    origin: fresh || kind !== 'translation' ? 'explicit' : 'reader',
+    settingsCaptured: false,
+    failureKind: null,
     id: randomUuid(),
     kind,
     modelDirectory: modelDirectory(s),
@@ -477,23 +480,41 @@ export async function previewCall(command: string, args: Record<string, any>): P
   const actionStatus = (action: ActionName, s: Settings, p?: Page, base?: Page) =>
     previewAction(s, action, credentials, verified, p, base);
   const jobStatus = (j: Job) => {
-    const s = settings();
-    s.translation = j.settings;
-    s.providers = [j.provider];
+    const s = effective(j.project);
+    if (j.settingsCaptured && j.pageRevision === state.pages[j.pageId]?.revision && j.failureKind !== 'configuration') {
+      s.translation = j.settings;
+      s.providers = [j.provider];
+    }
     const result = actionStatus(
       j.kind === 'preparation' ? 'prepare' : j.kind === 'cleanup' ? 'cleanup' : 'translate',
       s,
       state.pages[j.pageId],
     );
-    if (j.kind === 'preparation' && j.pageRevision !== state.pages[j.pageId]?.revision) {
-      result.ready = false;
-      result.issues.push({
-        code: 'revision',
-        section: 'page',
-        message: 'Page changed; review it and confirm preparation again.',
-      });
-    }
     return result;
+  };
+  const prepareJob = (job: Job) => {
+    const page = state.pages[job.pageId];
+    if (!page) throw Error('Page no longer belongs to this book');
+    const restarting = (job.pageRevision != null && job.pageRevision !== page.revision) || ['revision', 'configuration'].includes(job.failureKind ?? '');
+    if (restarting) {
+      job.settingsCaptured = false;
+      job.steps = [];
+      job.failureKind = null;
+      job.pageRevision = page.revision;
+    }
+    const book = state.books.find((b) => b.path === job.project);
+    const omitted = !job.settingsCaptured && job.origin !== 'explicit' && !!book?.omittedPageIds.includes(job.pageId);
+    if (omitted) {
+      job.status = 'cancelled';
+      job.error = null;
+      job.stageDetail = 'Skipped: page excluded from automatic translation';
+      job.sequence = ++jobSequence;
+    } else if (!job.settingsCaptured) {
+      const current = effective(job.project);
+      job.settings = structuredClone(current.translation);
+      job.provider = structuredClone(current.providers.find((p) => p.id === current.translation.providerId) ?? current.providers[0] ?? job.provider);
+    }
+    return { restarting, omitted };
   };
   const requireReady = (status: ReturnType<typeof previewAction>) => {
     if (!status.ready) throw Error(status.issues.map((i) => i.message).join('\n'));
@@ -891,14 +912,19 @@ export async function previewCall(command: string, args: Record<string, any>): P
       if (!job) throw Error('Job not found');
       if (['complete', 'cancelled'].includes(job.status))
         throw Error('Completed or cancelled jobs cannot be changed');
-      if (['resume', 'retry'].includes(args.action)) requireReady(jobStatus(job));
-      updateJob(job, args.action);
-      return { outcome: { changed: 1, skipped: 0, errors: [] }, state: publishJobs([job]) };
+      const starting = ['resume', 'retry'].includes(args.action);
+      const plan = starting ? prepareJob(job) : { restarting: false, omitted: false };
+      if (!plan.omitted) {
+        if (starting) requireReady(jobStatus(job));
+        updateJob(job, args.action);
+      }
+      return { outcome: { changed: 1, skipped: 0, errors: [], scheduled: Number(starting && !plan.omitted), restarting: Number(plan.restarting && !plan.omitted), omitted: Number(plan.omitted), blocked: 0 }, state: publishJobs([job]) };
     }
     case 'jobs_control_all': {
       jobsHeld = args.action === 'stop';
       if (jobsHeld) for (const r of regionRequests.values()) r.cancelled = true;
       const changed: Job[] = [];
+      let restarting = 0, omitted = 0;
       const errors: { id: string; message: string }[] = [];
       const latest = new Map<string, Job>();
       const ongoing = new Map<string, Job>();
@@ -916,6 +942,8 @@ export async function previewCall(command: string, args: Record<string, any>): P
               (!ongoing.has(key) || ongoing.get(key) === job) &&
               (job.status !== 'failed' || latest.get(key) === job)
         ) {
+          const plan = !jobsHeld ? prepareJob(job) : { restarting: false, omitted: false };
+          if (plan.omitted) { omitted++; changed.push(job); continue; }
           const status = !jobsHeld ? jobStatus(job) : null;
           if (status && !status.ready) {
             job.status = 'paused';
@@ -925,12 +953,15 @@ export async function previewCall(command: string, args: Record<string, any>): P
             changed.push(job);
             continue;
           }
+          if (plan.restarting) restarting++;
           updateJob(job, jobsHeld ? 'pause' : 'resume');
           changed.push(job);
         }
       }
       return {
         outcome: {
+          scheduled: jobsHeld ? 0 : changed.length - errors.length - omitted - restarting,
+          restarting, omitted, blocked: errors.length,
           changed: changed.length,
           skipped: previewJobs.length - changed.length,
           errors,
@@ -980,6 +1011,7 @@ export async function previewCall(command: string, args: Record<string, any>): P
           );
       }
       changed += expected.size;
+      for (const job of added) job.origin = 'batch';
       previewJobs.push(...added);
       publishJobs(added);
       return structuredClone({
@@ -1110,6 +1142,23 @@ export async function previewCall(command: string, args: Record<string, any>): P
       persist();
       return structuredClone(b);
     }
+    case 'book_omissions_update': {
+      const b = find();
+      const retained = new Set(b.chapters.flatMap(c => c.pageIds));
+      const base = new Set<string>(args.base);
+      const next = new Set<string>(args.omittedPageIds);
+      if (next.size !== args.omittedPageIds.length || args.omittedPageIds.some((id: string) => !retained.has(id))) throw Error('Invalid omitted pages');
+      const result = new Set(b.omittedPageIds);
+      for (const id of new Set([...base, ...next])) {
+        if (base.has(id) !== next.has(id)) {
+          if (!retained.has(id)) throw Error('Page no longer belongs to this book');
+          if (next.has(id)) result.add(id); else result.delete(id);
+        }
+      }
+      const omitted = b.chapters.flatMap(c => c.pageIds).filter(id => result.has(id));
+      if (JSON.stringify(omitted) !== JSON.stringify(b.omittedPageIds)) { b.omittedPageIds = omitted; b.revision++; persist(); }
+      return structuredClone(b);
+    }
     case 'book_organize': {
       const b = find();
       if (b.revision !== args.expected) throw Error('Book changed; reopen the organizer');
@@ -1126,8 +1175,10 @@ export async function previewCall(command: string, args: Record<string, any>): P
       b.revision++;
       for (const p of args.added) state.pages[p.id] = p;
       for (const [number, id] of b.chapters.flatMap((c) => c.pageIds).entries()) {
-        state.pages[id].number = number;
-        state.pages[id].revision++;
+        if (state.pages[id].number !== number) {
+          state.pages[id].number = number;
+          state.pages[id].revision++;
+        }
       }
       persist();
       return structuredClone(b);

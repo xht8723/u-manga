@@ -6,7 +6,6 @@ use rusqlite::{OptionalExtension, params};
 
 enum Update {
     Capture,
-    Refresh,
     Extracted {
         ids: Vec<String>,
         result: Extraction,
@@ -60,24 +59,18 @@ impl Engine {
             [&job.page_id],
             |r| r.get(0),
         )?;
-        ensure!(
-            current == revision,
-            "Page changed; glossary results were not applied"
-        );
+        if current != revision {
+            return Err(crate::job_state::ExecutionError::error(
+                crate::job_state::FailureKind::Revision,
+                "Page changed; glossary results were not applied",
+            ));
+        }
         let mut book = crate::library::get(&tx)?;
         let effective = crate::library::effective(&book, &self.application_settings.lock());
         let pair_matches = effective.source_language == job.settings.source_language
             && effective.target_language == job.settings.target_language;
-        if matches!(update, Update::Capture | Update::Refresh) {
-            if pair_matches {
-                job.settings.glossary = if job.settings.glossary_enabled {
-                    book.glossary.entries.clone()
-                } else {
-                    Vec::new()
-                };
-                job.settings.deepl_glossary_id = book.glossary.deepl_glossary_id.clone();
-            }
-            if matches!(update, Update::Capture) && job.glossary_checkpoint.is_none() {
+        if matches!(update, Update::Capture) {
+            if job.glossary_checkpoint.is_none() {
                 job.glossary_checkpoint = Some(ExtractionCheckpoint::default());
             }
         } else {
@@ -114,7 +107,7 @@ impl Engine {
                             checkpoint.skipped
                         ));
                     }
-                    if pair_matches && book.glossary.enabled && book.glossary.auto_detect {
+                    if pair_matches {
                         let mut changed = false;
                         for candidate in &terms {
                             // Current manually edited or earlier learned terminology always wins.
@@ -165,7 +158,7 @@ impl Engine {
                         checkpoint.warning = warning;
                     }
                 }
-                Update::Capture | Update::Refresh => unreachable!(),
+                Update::Capture => unreachable!(),
             }
         }
         ensure!(!token.is_cancelled(), "Cancelled");
@@ -195,17 +188,6 @@ impl Engine {
         })
         .await?
     }
-    pub(super) async fn refresh_translation_glossary(
-        self: &Arc<Self>,
-        job: &mut Job,
-        revision: u64,
-    ) -> Result<()> {
-        *job = self
-            .glossary_update(&job.id, revision, Update::Refresh)
-            .await?;
-        Ok(())
-    }
-
     pub(super) async fn prepare_glossary_sources(
         self: &Arc<Self>,
         job: &mut Job,

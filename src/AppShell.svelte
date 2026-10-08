@@ -32,6 +32,7 @@
   import { LibraryPublication, libraryPath } from './library-publication';
   import { refreshQueue } from './refresh-queue';
   import { jobIndex } from './job-index';
+  import { jobDestination } from './job-navigation';
   const navigation = new AsyncOwner();
   import ComboBox from './ComboBox.svelte';
   import { useCompactLayout } from './mobile-layout.svelte';
@@ -307,6 +308,41 @@
       ),
   );
   let workspace = $state<Workspace>();
+  let workspaceInitialPageId = $state<string | undefined>();
+  let openingJob = $state('');
+  let openingJobRequest = 0;
+  async function editJob(job: Job) {
+    if (openingJob === job.id) return;
+    const request = ++openingJobRequest;
+    const owned = navigation.begin();
+    const library = settings.libraryDirectory;
+    const current = () => owned() && !disposed && settings.libraryDirectory === library;
+    openingJob = job.id;
+    try {
+      if (workspace && !(await workspace.beforeLeave())) return;
+      if (!current()) return;
+      const destination = await ownedResult(current, jobDestination(
+        job.project, job.pageId,
+        path => call('book_open', { path }),
+        (path, chapterId) => call('chapter_pages', { path, chapterId }),
+        current,
+      ));
+      if (!destination || !current()) return;
+      await restoreWindow();
+      if (!current()) return;
+      readerCollapsed = false;
+      workspaceMode = 'Editor';
+      workspaceInitialPageId = destination.pageId;
+      book = destination.book;
+      chapterId = destination.chapterId;
+      reading = destination.project;
+      screen = 'Reader';
+    } catch (e) {
+      if (current()) notify('error', uiError(e));
+    } finally {
+      if (request === openingJobRequest) openingJob = '';
+    }
+  }
   let workspaceMode = $state('Reader'),
     readerCollapsed = $state(false),
     fullscreen = $state(false);
@@ -584,6 +620,7 @@
     if (mode === 'Editor') await restoreWindow();
     if (!current()) return;
     workspaceMode = mode;
+    workspaceInitialPageId = undefined;
     reading = null;
     chapterId = c.id;
     reading = pages;
@@ -1325,6 +1362,7 @@
     {:else if screen === 'Reader' && reading && book}{#key `${book.id}/${chapterId}`}<Workspace
           bind:this={workspace}
           initial={reading}
+          initialPageId={workspaceInitialPageId}
           omittedPageIds={book.omittedPageIds}
           {jobs}
           {jobsHeld}
@@ -1358,6 +1396,8 @@
           }}
         />{/key}
     {:else if screen === 'Jobs'}<JobsView
+        onedit={editJob}
+        {openingJob}
         {historyMore}
         {loadingHistory}
         onhistory={() => act(loadHistory)}

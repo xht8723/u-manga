@@ -24,6 +24,9 @@ pub struct GlossaryProgress {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct JobView {
+    pub settings_captured: bool,
+    pub origin: crate::job_state::JobOrigin,
+    pub failure_kind: Option<crate::job_state::FailureKind>,
     pub id: String,
     pub project: String,
     pub page_id: String,
@@ -85,6 +88,9 @@ impl JobView {
         let s = &j.settings;
         let p = &j.provider;
         Self {
+            settings_captured: j.settings_captured,
+            origin: j.origin,
+            failure_kind: j.failure_kind,
             id: j.id.clone(),
             project: j.project.clone(),
             page_id: j.page_id.clone(),

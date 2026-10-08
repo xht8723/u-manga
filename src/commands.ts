@@ -57,6 +57,7 @@ export type Commands = {
     Path & { expected: number; chapters: T.Chapter[]; added: T.Page[]; omittedPageIds: string[] },
     T.Book
   >;
+  book_omissions_update: Command<Path & { base: string[]; omittedPageIds: string[] }, T.Book>;
   book_export: Command<
     Path & { chapterId: string | null; destination: string; format: string },
     number

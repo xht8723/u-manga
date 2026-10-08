@@ -203,11 +203,13 @@ impl Engine {
                 outcome.busy += 1;
             } else {
                 positions.insert(page.version.id.clone(), page.number);
-                jobs.push(self.captured_job(
+                let mut job = self.captured_job(
                     &submission,
                     &page.version.id,
                     (mode == BatchMode::Replace).then_some(expected),
-                ));
+                );
+                job.origin = crate::job_state::JobOrigin::Batch;
+                jobs.push(job);
             }
         }
         // Deleted pages or pages moved outside the captured chapter are never replaced.

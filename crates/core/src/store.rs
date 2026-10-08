@@ -82,7 +82,7 @@ pub fn replace_file(source: &Path, target: &Path) -> Result<()> {
 pub fn assets(path: &Path) -> PathBuf {
     PathBuf::from(format!("{}-data", path.display()))
 }
-pub const FORMAT_VERSION: u32 = 19;
+pub const FORMAT_VERSION: u32 = 20;
 
 pub fn check_version(c: &Connection) -> Result<()> {
     let version: String = c

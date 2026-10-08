@@ -813,7 +813,7 @@ async fn retry_uses_saved_reading_and_glossary_without_repeating_requests() {
     );
 }
 #[tokio::test]
-async fn queued_language_changes_preserve_nonempty_captured_glossary() {
+async fn queued_language_changes_capture_current_language_and_glossary() {
     for automatic in [false, true] {
         let dir = tempfile::tempdir_in(root().join("test-output")).unwrap();
         let book = fixture(dir.path(), 1, 1, false);
@@ -840,18 +840,26 @@ async fn queued_language_changes_preserve_nonempty_captured_glossary() {
             target: "New English".into(),
         }];
         current.deepl_glossary_id = "new-english-id".into();
+        current.auto_detect = automatic;
         library::save_glossary(dir.path(), path, current.revision, current).unwrap();
-        let mut defaults = AppSettings::default();
+        let mut defaults = AppSettings {
+            translation: settings.clone(),
+            ..Default::default()
+        };
         defaults.translation.target_language = "en".into();
+        let profile = provider(&server);
+        defaults.translation.provider_id = profile.id.clone();
+        defaults.providers = vec![profile];
         e.configure(&defaults);
         e.start();
         let job = done(&e).await.remove(0);
         assert_eq!(job.status, "complete", "{:?}", job.error);
-        assert_eq!(job.settings.glossary, settings.glossary);
-        assert_eq!(job.settings.deepl_glossary_id, "captured-chinese-id");
+        assert_eq!(job.settings.target_language, "en");
+        assert_eq!(job.settings.glossary[0].target, "New English");
+        assert_eq!(job.settings.deepl_glossary_id, "new-english-id");
         let requests = server.received_requests().await.unwrap();
         let last = String::from_utf8(requests.last().unwrap().body.clone()).unwrap();
-        assert!(last.contains("原有中文") && !last.contains("New English"));
+        assert!(!last.contains("原有中文") && last.contains("New English"));
     }
 }
 #[tokio::test]

@@ -200,6 +200,10 @@ pub struct Project {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Job {
+    pub origin: crate::job_state::JobOrigin,
+    pub settings_captured: bool,
+    pub attempt: u64,
+    pub failure_kind: Option<crate::job_state::FailureKind>,
     pub id: String,
     pub project: String,
     pub page_id: String,

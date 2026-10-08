@@ -87,6 +87,48 @@ fn organize(root: &Path, book: &Book, chapters: Vec<Chapter>, omitted: Vec<Strin
 }
 
 #[test]
+fn omission_only_organization_does_not_invalidate_page_jobs() {
+    let (temp, book, engine) = fixture();
+    let path = Path::new(&book.path);
+    let before = store::open(path).unwrap().pages;
+    let preview = engine.preview_batch(&book.path, None).unwrap();
+    let versions = preview
+        .pages
+        .iter()
+        .map(|p| p.version.clone())
+        .collect::<Vec<_>>();
+    let submitted = engine
+        .enqueue_batch(
+            &book.path,
+            &book.id,
+            None,
+            &versions,
+            BatchMode::Replace,
+            &ProviderProfile::default(),
+            &TranslationSettings::default(),
+            temp.path(),
+        )
+        .unwrap();
+    organize(
+        temp.path(),
+        &book,
+        book.chapters.clone(),
+        vec![before[1].id.clone()],
+    );
+    let after = store::open(path).unwrap().pages;
+    assert_eq!(
+        serde_json::to_value(&before).unwrap(),
+        serde_json::to_value(&after).unwrap()
+    );
+    for job in submitted.jobs {
+        assert_eq!(
+            job.page_revision,
+            Some(store::page(path, &job.page_id).unwrap().revision)
+        );
+    }
+}
+
+#[test]
 fn omission_follows_page_identity_and_survives_current_format_copy_and_relocation() {
     let (temp, mut book, _) = fixture();
     let ids = book
@@ -343,14 +385,25 @@ fn stale_previews_cannot_enqueue_after_omission_changes_and_existing_jobs_are_re
             Path::new("models"),
         )
         .unwrap();
-    assert!(result.jobs.is_empty());
-    assert_eq!(result.outcome.changed, 5);
+    assert_eq!(result.jobs.len(), 4);
+    assert_eq!(result.outcome.omitted, 1);
+    assert_eq!(result.outcome.changed, 0);
     assert_eq!(
-        store::jobs(Path::new(&book.path)).unwrap()[0].id,
+        store::jobs(Path::new(&book.path))
+            .unwrap()
+            .into_iter()
+            .find(|j| j.id == existing[0].id)
+            .unwrap()
+            .id,
         existing[0].id
     );
     assert_eq!(
-        store::jobs(Path::new(&book.path)).unwrap()[0].status,
+        store::jobs(Path::new(&book.path))
+            .unwrap()
+            .into_iter()
+            .find(|j| j.id == existing[0].id)
+            .unwrap()
+            .status,
         existing[0].status
     );
 }
@@ -380,7 +433,7 @@ fn import_creation_saves_marks_and_previous_formats_are_rejected_without_deletio
         library::open(Path::new(&copied.path))
             .unwrap_err()
             .to_string()
-            .contains("requires format 19")
+            .contains("requires format 20")
     );
     assert!(Path::new(&copied.path).is_file());
     let index = temp.path().join("created/library.sqlite");
@@ -394,4 +447,36 @@ fn import_creation_saves_marks_and_previous_formats_are_rejected_without_deletio
             .contains("Unsupported library format")
     );
     assert!(index.is_file());
+}
+
+#[test]
+fn narrow_omission_save_merges_concurrent_choices_and_preserves_pages_and_metadata() {
+    let (temp, book, _) = fixture();
+    let path = Path::new(&book.path);
+    let root = temp.path().join("library");
+    let ids = &book.chapters[0].page_ids;
+    let pages = serde_json::to_value(store::open(path).unwrap().pages).unwrap();
+    library::update_omissions(&root, path, &[], &[ids[0].clone()]).unwrap();
+    // A second stale Organizer changes a different mark; neither edit overwrites the other.
+    let merged = library::update_omissions(&root, path, &[], &[ids[1].clone()]).unwrap();
+    assert_eq!(merged.omitted_page_ids, ids[..2]);
+    assert_eq!(
+        serde_json::to_value(&merged.metadata).unwrap(),
+        serde_json::to_value(&book.metadata).unwrap()
+    );
+    assert_eq!(
+        serde_json::to_value(store::open(path).unwrap().pages).unwrap(),
+        pages
+    );
+    let revision = merged.revision;
+    let no_op = library::update_omissions(
+        &root,
+        path,
+        &merged.omitted_page_ids,
+        &merged.omitted_page_ids,
+    )
+    .unwrap();
+    assert_eq!(no_op.revision, revision);
+    assert!(library::update_omissions(&root, path, &[], &[uid()]).is_err());
+    assert_eq!(library::open(path).unwrap().revision, revision);
 }

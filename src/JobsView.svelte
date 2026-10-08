@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { uiError, uiJoin, type UiText, t, tr, count, locale } from './i18n';
+  import { uiError, type UiText, t, tr, count, locale } from './i18n';
   import type { JobAction } from './commands';
   import { cleanupName } from './model-descriptions';
   import { useCompactLayout } from './mobile-layout.svelte';
@@ -15,12 +15,14 @@
     ChevronRight,
     ChevronDown,
     SlidersHorizontal,
+    PenLine,
   } from 'lucide-svelte';
   import ComboBox from './ComboBox.svelte';
   import type { Job, JobsOutcome, Settings } from './types';
   import JobTimer from './JobTimer.svelte';
   import { jobIndex } from './job-index';
   import RequirementHint from './RequirementHint.svelte';
+  import { groupJobErrors } from './jobs-feedback';
   import { jobsReadiness } from './action-readiness.svelte';
   import {
     filterJobs,
@@ -42,6 +44,8 @@
     onsettings,
     oncontrol,
     oncontrolall,
+    onedit,
+    openingJob = '',
     held = false,
     recovering = false,
     errors = [],
@@ -57,6 +61,8 @@
     errors?: UiText[];
     oncontrol: (id: string, action: JobAction) => Promise<void>;
     oncontrolall: (action: 'start' | 'stop') => Promise<JobsOutcome>;
+    onedit?: (job: Job) => Promise<void>;
+    openingJob?: string;
   } = $props();
   const tabs: { id: JobsTab; label: string; title: string }[] = [
     { id: 'ongoing', label: 'Ongoing', title: 'Running, waiting, and paused jobs' },
@@ -84,6 +90,9 @@
       : [...expandedJobs, id];
   }
   let bulkRequest = 0;
+  let bulkErrors = $state<JobsOutcome['errors']>([]);
+  let bulkOutcome = $state<JobsOutcome | null>(null);
+  const errorGroups = $derived(groupJobErrors([...bulkErrors, ...errors.map((message, index) => ({ id: `global-${index}`, message }))]));
   const pageSize = 50;
   const stopping = $derived(jobIndex(jobs).stopping);
   const canStart = $derived(held || jobIndex(jobs).startable > 0);
@@ -92,11 +101,14 @@
     bulk = action;
     error = '';
     notice = '';
+    bulkErrors = [];
+    bulkOutcome = null;
     try {
       const result = await oncontrolall(action);
       if (request !== bulkRequest) return;
-      notice = `${result.changed} jobs ${action === 'stop' ? 'paused' : 'scheduled'}`;
-      error = uiJoin(result.errors.map((e) => e.message));
+      notice = action === 'stop' ? `${result.changed} jobs paused` : '';
+      bulkOutcome = action === 'start' ? result : null;
+      bulkErrors = result.errors;
     } catch (e) {
       if (request === bulkRequest) error = uiError(e);
     } finally {
@@ -222,7 +234,9 @@
         : ''}
     </p>{/if}
   {#if notice}<p class="jobs-state" role="status">{tr(notice, $locale)}</p>{/if}
-  {#each errors as issue}<p class="error-text" role="alert">{tr(issue, $locale)}</p>{/each}
+  {#if bulkOutcome}<p class="jobs-state" role="status">
+    {t('jobs.controlSummary', $locale, { scheduled: bulkOutcome.scheduled, restarting: bulkOutcome.restarting, omitted: bulkOutcome.omitted, blocked: bulkOutcome.blocked })}
+  </p>{/if}
   <div class="queue-tabs" role="tablist" aria-label={t('m_f77670f400a6', $locale)}>
     {#each tabs as t}<button
         role="tab"
@@ -345,6 +359,16 @@
       </nav>{/if}
   </div>
   {#if error}<p class="error-text" role="alert">{tr(error, $locale)}</p>{/if}
+  {#if errorGroups.length}
+    <details class="jobs-control-errors">
+      <summary>{tr('Some jobs need attention', $locale)} · {bulkErrors.length + errors.length}</summary>
+      <div class="jobs-control-error-list">
+        {#each errorGroups as group}
+          <p><strong>{count(group.ids.length, 'm_1e01744f2d62', 'm_39a17a750216', $locale)}</strong><br />{tr(group.message, $locale)}</p>
+        {/each}
+      </div>
+    </details>
+  {/if}
   <div id="queue-jobs" role="tabpanel" aria-labelledby={`queue-tab-${tab}`} tabindex="0">
     {#each visible as job (job.id)}
       {@const location = job.location}
@@ -393,6 +417,14 @@
             >
           {/if}
           <div class="job-actions">
+            <button
+              class="job-edit-page"
+              title={t('jobs.editPage', $locale)}
+              aria-label={t('jobs.editPage', $locale)}
+              aria-busy={openingJob === job.id}
+              disabled={!onedit || openingJob === job.id}
+              onclick={() => onedit?.(job)}
+            ><PenLine size={16} /></button>
             {#if ['running', 'queued'].includes(job.status)}
               <button
                 title={t('m_495faee583e8', $locale)}
@@ -531,6 +563,10 @@
 </main>
 
 <style>
+  .jobs-control-errors { margin: 0 0 1rem; padding: .65rem .8rem; border: 1px solid var(--border); border-radius: .65rem; }
+  .jobs-control-errors summary { cursor: pointer; min-height: 1.5rem; }
+  .jobs-control-error-list { max-height: min(15rem, 35dvh); overflow: auto; overflow-wrap: anywhere; }
+  .jobs-control-error-list p { margin: .8rem 0; }
   .jobs-heading,
   .jobs-bulk {
     display: flex;

@@ -2,6 +2,44 @@
 use serde::{Deserialize, Serialize};
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
+pub enum JobOrigin {
+    Reader,
+    Batch,
+    Explicit,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum FailureKind {
+    Revision,
+    Configuration,
+    Requirements,
+    Processing,
+    Storage,
+}
+
+#[derive(Debug)]
+pub struct ExecutionError {
+    pub kind: FailureKind,
+    pub message: String,
+}
+impl std::fmt::Display for ExecutionError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.message)
+    }
+}
+impl std::error::Error for ExecutionError {}
+impl ExecutionError {
+    pub fn error(kind: FailureKind, message: impl Into<String>) -> anyhow::Error {
+        Self {
+            kind,
+            message: message.into(),
+        }
+        .into()
+    }
+}
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum JobStatus {
     Queued,
     Running,

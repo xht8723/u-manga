@@ -223,6 +223,9 @@ export type Project = {
 };
 /** Durable preview fixture shape; production exposes only Job below. */
 export type CapturedJob = {
+  origin?: 'reader' | 'batch' | 'explicit';
+  settingsCaptured?: boolean;
+  failureKind?: 'revision' | 'configuration' | 'requirements' | 'processing' | 'storage' | null;
   steps: {
     stage: string;
     status: 'running' | 'complete' | 'skipped' | 'warning' | 'failed';
@@ -312,6 +315,10 @@ export type RegionResult = {
 };
 export type ActionReadiness = Record<ActionName, Availability>;
 export type JobsOutcome = {
+  scheduled: number;
+  restarting: number;
+  omitted: number;
+  blocked: number;
   changed: number;
   skipped: number;
   errors: { id: string; message: UiText }[];

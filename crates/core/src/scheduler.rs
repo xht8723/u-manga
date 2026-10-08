@@ -264,6 +264,7 @@ mod scheduler_contracts {
 pub(super) struct Scheduler {
     pub(super) jobs: HashMap<String, Entry>,
     control_intents: HashMap<String, u64>,
+    bulk_intents: HashMap<String, u64>,
     pub(super) pending: VecDeque<String>,
     pub(super) active: HashSet<String>,
     pub(super) blocked: HashSet<String>,
@@ -412,6 +413,10 @@ pub struct JobFailure {
 #[serde(rename_all = "camelCase")]
 pub struct ControlResult {
     pub changed: usize,
+    pub scheduled: usize,
+    pub restarting: usize,
+    pub omitted: usize,
+    pub blocked: usize,
     pub skipped: usize,
     pub errors: Vec<JobFailure>,
 }
@@ -425,6 +430,7 @@ pub struct Engine {
     pub(super) held: AtomicBool,
     concurrent_books: AtomicUsize,
     pub(super) application_settings: Mutex<AppSettings>,
+    pub(super) application_configured: AtomicBool,
     pub(super) control_serial: AtomicU64,
     pub(super) notify: Notify,
     pub(super) secret: Secret,
@@ -472,6 +478,7 @@ impl Engine {
             held: AtomicBool::new(false),
             concurrent_books: AtomicUsize::new(2),
             application_settings: Mutex::new(AppSettings::default()),
+            application_configured: AtomicBool::new(false),
             control_serial: AtomicU64::new(0),
             notify,
             secret,
@@ -482,6 +489,20 @@ impl Engine {
         self.concurrent_books
             .store(settings.concurrent_books.clamp(1, 4), Ordering::SeqCst);
         *self.application_settings.lock() = settings.clone();
+        self.application_configured.store(true, Ordering::SeqCst);
+        let pending: Vec<_> = self
+            .state
+            .lock()
+            .jobs
+            .values()
+            .filter(|e| {
+                !e.job.settings_captured && ["queued", "paused"].contains(&e.job.status.as_str())
+            })
+            .map(|e| e.job.clone())
+            .collect();
+        for job in pending {
+            (self.notify)(job);
+        }
     }
     pub fn is_held(&self) -> bool {
         self.held.load(Ordering::SeqCst)
@@ -569,6 +590,7 @@ impl Engine {
         e.token.cancel();
         e.job.status = "paused".into();
         e.job.error = Some(reason.into());
+        e.job.failure_kind = Some(crate::job_state::FailureKind::Requirements);
         e.job.stage_detail = "Requirements unavailable".into();
         state.pending.retain(|v| v != id);
         let job = state.touch(id);
@@ -684,6 +706,7 @@ impl Engine {
                             e.job.status = "paused".into();
                         }
                         e.job.error = Some(message);
+                        e.job.failure_kind = Some(crate::job_state::FailureKind::Storage);
                         *job = state.touch(&job.id);
                     }
                 }
@@ -851,6 +874,25 @@ impl Engine {
                 }
                 Err(error) => {
                     e.job.status = "failed".into();
+                    e.job.failure_kind = Some(
+                        error
+                            .downcast_ref::<crate::job_state::ExecutionError>()
+                            .map_or(crate::job_state::FailureKind::Processing, |e| e.kind),
+                    );
+                    if error.downcast_ref::<rusqlite::Error>().is_some()
+                        || error.downcast_ref::<std::io::Error>().is_some()
+                    {
+                        e.job.failure_kind = Some(crate::job_state::FailureKind::Storage);
+                    }
+                    if matches!(
+                        e.job.failure_kind,
+                        Some(
+                            crate::job_state::FailureKind::Configuration
+                                | crate::job_state::FailureKind::Requirements
+                        )
+                    ) {
+                        e.job.status = "paused".into();
+                    }
                     let message = format!("{error:#}");
                     e.job.record_step(
                         &e.job.stage.clone(),
@@ -967,7 +1009,10 @@ impl Engine {
         saved_job.page_revision = Some(*expected + 1);
         saved_job.record_step(stage, status, detail, None);
         if !store::save_checkpoint(Path::new(&saved_job.project), page, *expected, &saved_job)? {
-            bail!("Newer edits preserved; completed translation requests remain cached")
+            return Err(crate::job_state::ExecutionError::error(
+                crate::job_state::FailureKind::Revision,
+                "Newer edits preserved; start the job again to use current settings.",
+            ));
         }
         *expected = page.revision;
         let mut state = self.state.lock();
@@ -1219,6 +1264,14 @@ impl Engine {
         revision: Option<u64>,
     ) -> Job {
         Job {
+            origin: if submission.kind != JobKind::Translation || revision.is_some() {
+                crate::job_state::JobOrigin::Explicit
+            } else {
+                crate::job_state::JobOrigin::Reader
+            },
+            settings_captured: false,
+            attempt: 0,
+            failure_kind: None,
             id: uid(),
             project: submission.path.into(),
             page_id: page_id.into(),
@@ -1343,6 +1396,11 @@ impl Engine {
         use crate::job_state::JobAction;
         let action = JobAction::parse(action)?;
         let _op = self.operations.lock();
+        let prepared = if matches!(action, JobAction::Resume | JobAction::Retry) {
+            Some(self.rebase_for_resume(&self.job(id).context("Job not found")?)?)
+        } else {
+            None
+        };
         let mut state = self.state.lock();
         anyhow::ensure!(
             state.control_intents.get(id) == Some(&intent.0)
@@ -1386,6 +1444,10 @@ impl Engine {
                 state.pending.retain(|v| v != id);
             }
             JobAction::Resume | JobAction::Retry => {
+                if let Some(job) = prepared {
+                    e.job = job;
+                    e.requirements_key = crate::job_view::JobView::requirements_key(&e.job);
+                }
                 e.token = CancellationToken::new();
                 e.job.status = "queued".into();
                 e.job.stage = "waiting".into();
@@ -1414,6 +1476,10 @@ impl Engine {
             bail!("Unknown jobs action");
         }
         let request = self.control_serial.fetch_add(1, Ordering::SeqCst) + 1;
+        if action == "start" {
+            let mut state = self.state.lock();
+            state.bulk_intents = state.control_intents.clone();
+        }
         if action == "stop" {
             self.hold();
         }
@@ -1429,6 +1495,18 @@ impl Engine {
         blocked: &HashMap<String, String>,
     ) -> Result<ControlResult> {
         let _op = self.operations.lock();
+        let candidates: Vec<_> = if action == "start" {
+            self.state
+                .lock()
+                .jobs
+                .values()
+                .filter(|e| ["paused", "queued", "failed"].contains(&e.job.status.as_str()))
+                .map(|e| e.job.clone())
+                .collect()
+        } else {
+            vec![]
+        };
+        let mut prepared = self.resume_plans(candidates);
         let mut state = self.state.lock();
         if request != self.control_serial.load(Ordering::SeqCst) {
             return Ok(ControlResult::default());
@@ -1448,8 +1526,18 @@ impl Engine {
         });
         let mut changed = vec![];
         let mut result = ControlResult::default();
+        let mut scheduled_ids = HashSet::new();
+        let mut restarting_ids = HashSet::new();
+        let mut omitted_ids = HashSet::new();
         let mut pending: HashSet<_> = state.pending.iter().cloned().collect();
         for id in ids {
+            if action == "start"
+                && state.control_intents.get(&id).copied().unwrap_or(0)
+                    != state.bulk_intents.get(&id).copied().unwrap_or(0)
+            {
+                result.skipped += 1;
+                continue;
+            }
             let e = &state.jobs[&id];
             let key = (e.job.project.clone(), e.job.page_id.clone());
             if state.blocked.contains(&e.job.project) {
@@ -1468,13 +1556,57 @@ impl Engine {
                 continue;
             }
             let active = state.active.contains(&id);
+            let mut restarting = false;
             let e = state.jobs.get_mut(&id).unwrap();
+            if action == "start" && !active {
+                match prepared.remove(&id) {
+                    Some(Ok(None)) => {
+                        e.token.cancel();
+                        e.job.status = "cancelled".into();
+                        e.job.error = None;
+                        e.job.failure_kind = None;
+                        e.job.stage_detail =
+                            "Skipped: page excluded from automatic translation".into();
+                        pending.remove(&id);
+                        state.restart.remove(&id);
+                        changed.push(state.touch(&id));
+                        result.omitted += 1;
+                        omitted_ids.insert(id.clone());
+                        continue;
+                    }
+                    Some(Err(error)) => {
+                        e.job.status = "paused".into();
+                        e.job.error = Some(error.to_string());
+                        e.job.failure_kind = Some(
+                            error
+                                .downcast_ref::<crate::job_state::ExecutionError>()
+                                .map_or(crate::job_state::FailureKind::Storage, |e| e.kind),
+                        );
+                        pending.remove(&id);
+                        result.blocked += 1;
+                        result.errors.push(JobFailure {
+                            id: id.clone(),
+                            message: error.to_string(),
+                        });
+                        changed.push(state.touch(&id));
+                        continue;
+                    }
+                    Some(Ok(Some(job))) => {
+                        restarting = (e.job.settings_captured && !job.settings_captured)
+                            || e.job.page_revision != job.page_revision;
+                        e.job = job;
+                        e.requirements_key = crate::job_view::JobView::requirements_key(&e.job);
+                    }
+                    None => {}
+                }
+            }
             if action == "start"
                 && let Some(reason) = blocked.get(&id)
             {
                 e.token.cancel();
                 e.job.status = "paused".into();
                 e.job.error = Some(reason.clone());
+                e.job.failure_kind = Some(crate::job_state::FailureKind::Requirements);
                 e.job.stage_detail = "Requirements unavailable".into();
                 pending.remove(&id);
                 state.restart.remove(&id);
@@ -1482,8 +1614,13 @@ impl Engine {
                     id: id.clone(),
                     message: reason.clone(),
                 });
+                result.blocked += 1;
                 changed.push(state.touch(&id));
                 continue;
+            }
+            if restarting {
+                result.restarting += 1;
+                restarting_ids.insert(id.clone());
             }
             if action == "stop" {
                 e.token.cancel();
@@ -1492,12 +1629,20 @@ impl Engine {
                 pending.remove(&id);
             } else if active {
                 state.restart.insert(id.clone());
+                if !restarting {
+                    result.scheduled += 1;
+                    scheduled_ids.insert(id.clone());
+                }
             } else {
                 e.token = CancellationToken::new();
                 e.job.status = "queued".into();
                 e.job.stage = "waiting".into();
                 e.job.stage_detail.clear();
                 e.job.error = None;
+                if !restarting {
+                    result.scheduled += 1;
+                    scheduled_ids.insert(id.clone());
+                }
                 if pending.insert(id.clone()) {
                     state.pending.push_back(id.clone());
                 }
@@ -1508,8 +1653,17 @@ impl Engine {
         state.order_pending();
         drop(state);
         result.changed = changed.len();
-        result.errors.extend(self.persist_notify(changed));
-        result.changed = result.changed.saturating_sub(result.errors.len());
+        let failures = self.persist_notify(changed);
+        result.changed = result.changed.saturating_sub(failures.len());
+        for failure in &failures {
+            result.scheduled -= usize::from(scheduled_ids.remove(&failure.id));
+            result.restarting -= usize::from(restarting_ids.remove(&failure.id));
+            result.omitted -= usize::from(omitted_ids.remove(&failure.id));
+            if !result.errors.iter().any(|e| e.id == failure.id) {
+                result.blocked += 1;
+            }
+        }
+        result.errors.extend(failures);
         Ok(result)
     }
     pub async fn pause_for_edit(

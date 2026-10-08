@@ -2,7 +2,8 @@
   import { randomUuid } from './browser-id';
   import { uiError, type UiText, t, tr, locale } from './i18n';
   import { untrack } from 'svelte';
-  import { ImagePlus } from 'lucide-svelte';
+  import { ImagePlus, GripVertical } from 'lucide-svelte';
+  import { sweepSelection } from './page-selection';
   import Modal from './Modal.svelte';
   import Thumbnail from './Thumbnail.svelte';
   import { call } from './bridge';
@@ -38,6 +39,8 @@
     selected = $state<string[]>([]),
     current = $state(untrack(() => (book?.chapters || initial?.chapters)?.[0]?.id || ''));
   let warnings = $state<UiText[]>(untrack(() => [...(initial?.warnings || [])]));
+  const baseChapters = untrack(() => JSON.stringify(book?.chapters || []));
+  const baseOmissions = untrack(() => [...(book?.omittedPageIds || [])]);
   function draft(): ImportPreview {
     const retained = new Set(chapters.flatMap((c) => c.pageIds));
     return {
@@ -257,7 +260,9 @@
     working = true;
     try {
       onapply?.(
-        await call('book_organize', {
+        !added.length && JSON.stringify($state.snapshot(chapters)) === baseChapters
+          ? await call('book_omissions_update', { path: book.path, base: baseOmissions, omittedPageIds: $state.snapshot(omittedPageIds) })
+          : await call('book_organize', {
           path: book.path,
           expected: book.revision,
           chapters: $state.snapshot(chapters),
@@ -420,6 +425,7 @@
           </div>
           <div
             class="organizer-page-list"
+            use:sweepSelection={{ selected: () => selected, change: (ids) => selected = ids, enabled: () => !working && !moveDialog, identity: () => current }}
             bind:clientWidth={pageWidth}
             bind:this={pageViewport}
             bind:clientHeight={pageHeight}
@@ -439,11 +445,10 @@
                   <div
                     class="organizer-page"
                     class:selected={selected.includes(id)}
+                    data-selection-page={id}
                     style:height={`${pageRowHeight - 12}px`}
-                    draggable={!working}
                     role="group"
                     aria-label={tr(`Page ${i + 1}`, $locale)}
-                    ondragstart={() => (dragPage = id)}
                     ondragover={(e) => e.preventDefault()}
                     ondrop={(e) => {
                       e.preventDefault();
@@ -474,6 +479,19 @@
                         >{/if}
                     </div>
                     <div class="page-order-actions">
+                      <button
+                        class="page-reorder-grip"
+                        data-reorder-handle
+                        draggable={!working}
+                        disabled={working}
+                        title={t('organizer.reorderDrag', $locale)}
+                        aria-label={t('organizer.reorderDrag', $locale)}
+                        ondragstart={(e) => {
+                          dragPage = id;
+                          if (e.dataTransfer) { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', id); }
+                        }}
+                        ondragend={() => (dragPage = '')}
+                      ><GripVertical size={16} /></button>
                       <button
                         disabled={i === 0 || working}
                         title={t('m_8714e92183fb', $locale)}

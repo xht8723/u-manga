@@ -135,7 +135,18 @@ impl JobsHub {
     }
     fn collect(&self, engine: &Engine, ids: Option<HashSet<String>>) -> JobsBatch {
         let generation = self.generation.load(Ordering::SeqCst);
-        let runtime = engine.snapshot_views(ids.as_ref());
+        let mut runtime = engine.snapshot_views(ids.as_ref());
+        let waiting = runtime
+            .iter()
+            .filter(|v| !v.job.settings_captured)
+            .filter_map(|v| engine.job(&v.job.id))
+            .collect();
+        let mut prospective = engine.resume_plans(waiting);
+        for view in &mut runtime {
+            if let Some(Ok(Some(job))) = prospective.remove(&view.job.id) {
+                view.job = umanga_core::job_view::JobView::from_job(&job);
+            }
+        }
         let found: HashSet<_> = runtime.iter().map(|j| j.job.id.clone()).collect();
         let removed = ids
             .map(|ids| ids.difference(&found).cloned().collect())
@@ -231,8 +242,17 @@ pub async fn job_control(
     let intent = state.engine.request_job_control(&id).map_err(error)?;
     let action = action.as_str().to_owned();
     if ["resume", "retry"].contains(&action.as_str()) {
-        let job = state.engine.job(&id).ok_or("Job not found")?;
-        if let Err(e) = state.engine.check_requirements(job).await {
+        let original = state.engine.job(&id).ok_or("Job not found")?;
+        let engine = state.engine.clone();
+        let job = tauri::async_runtime::spawn_blocking(move || engine.prospective_job(original))
+            .await
+            .map_err(error)?
+            .map_err(error)?;
+        if let Err(e) = if state.engine.job_omitted(&job).map_err(error)? {
+            Ok(())
+        } else {
+            state.engine.check_requirements(job).await
+        } {
             let engine = state.engine.clone();
             let key = id.clone();
             let reason = e.to_string();

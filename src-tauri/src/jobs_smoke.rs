@@ -67,6 +67,10 @@ pub fn prepare() -> anyhow::Result<AppSettings> {
             cleanup_model: None,
             model_directory: String::new(),
             steps: vec![],
+            origin: umanga_core::job_state::JobOrigin::Explicit,
+            settings_captured: true,
+            attempt: 0,
+            failure_kind: None,
             page_revision: None,
             fresh: false,
             glossary_checkpoint: None,
@@ -96,6 +100,7 @@ pub fn prepare() -> anyhow::Result<AppSettings> {
         library_directory: library.to_string_lossy().into(),
         ..Default::default()
     };
+    settings.translation.cleanup.method = CleanupMethod::Solid;
     settings.setup.completed = true;
     settings.setup.step = "review".into();
     settings.appearance.active = "night".into();

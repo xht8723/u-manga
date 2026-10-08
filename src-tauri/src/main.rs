@@ -649,6 +649,7 @@ fn main() {
             glossary_export,
             chapter_complete,
             book_organize,
+            book_omissions_update,
             book_delete,
             book_refresh,
             show_source,

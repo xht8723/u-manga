@@ -1,4 +1,7 @@
 {
+  "organizer.reorderDrag": "Drag to reorder page",
+  "jobs.editPage": "Edit page",
+  "jobs.pageUnavailable": "This page is no longer available in the book.",
   "m_240937754bdd": "Model support is unavailable. Your Thinking preference still applies.",
   "m_e2a8a6bcb2b9": "Checking model support. You can change Thinking now.",
   "m_79d0e956d233": "This model reports required thinking. Off may be rejected or ignored.",
@@ -1367,5 +1370,11 @@
   "audit.httpLimit": "Provider response exceeds the 16 MiB safety limit. Reduce the service output and retry explicitly.",
   "audit.responseLimit": "Service response exceeds the safety size limit. Retry with a smaller response.",
   "audit.bookIdentity": "Stored book identity is inconsistent",
-  "audit.bookChanged": "Book changed during import"
+  "audit.bookChanged": "Book changed during import",
+  "jobs.controlSummary": "{scheduled} scheduled · {restarting} restarting · {omitted} skipped · {blocked} blocked",
+  "jobs.attention": "Some jobs need attention",
+  "jobs.omitted": "Skipped: page excluded from automatic translation",
+  "jobs.conflict": "Page changed; start the job again to use current settings.",
+  "jobs.newer": "Newer edits preserved; start the job again to use current settings.",
+  "jobs.pageRemoved": "Page no longer belongs to this book"
 }

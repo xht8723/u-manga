@@ -239,6 +239,26 @@ pub async fn chapter_complete(
     Ok(result)
 }
 #[tauri::command]
+pub async fn book_omissions_update(
+    state: State<'_, AppState>,
+    path: String,
+    base: Vec<String>,
+    omitted_page_ids: Vec<String>,
+) -> Api<Book> {
+    let _storage = state.storage_change.lock().await;
+    require_managed(&state, &path)?;
+    let root = root(&state);
+    let result = tauri::async_runtime::spawn_blocking(move || {
+        library::update_omissions(&root, Path::new(&path), &base, &omitted_page_ids)
+    })
+    .await
+    .map_err(error)?
+    .map_err(error)?;
+    state.jobs_hub.invalidate(&result.path, &state.engine);
+    hosting::notify_clients(&state.app, &result.path, None);
+    Ok(result)
+}
+#[tauri::command]
 pub async fn book_organize(
     state: State<'_, AppState>,
     path: String,

@@ -809,6 +809,11 @@ progress::-webkit-progress-value {
   border-color: var(--accent);
   background: var(--selection);
 }
+.organizer-page { cursor: pointer; user-select: none; }
+.organizer-page-list.sweep-selecting { cursor: crosshair; }
+.organizer-page-list.sweep-selecting .organizer-page { cursor: inherit; }
+.page-order-actions .page-reorder-grip { margin-right: auto; padding: 2px 5px; cursor: grab; color: var(--muted); }
+.page-order-actions .page-reorder-grip:active { cursor: grabbing; }
 .organizer-page .page-selection {
   flex-direction: row;
   align-items: center;

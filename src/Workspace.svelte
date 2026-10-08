@@ -100,6 +100,7 @@
   import ReaderControls from './ReaderControls.svelte';
   let {
     initial,
+    initialPageId,
     omittedPageIds,
     settings,
     fonts,
@@ -124,6 +125,7 @@
     onjobcontrol,
   }: {
     initial: Project;
+    initialPageId?: string;
     omittedPageIds?: string[];
     settings: Settings;
     fonts: string[];
@@ -151,7 +153,7 @@
   let omittedPages = $derived(new Set(omittedPageIds ?? project?.omittedPageIds));
   let disposed = false;
   let completed = $state(false);
-  let index = $state(0);
+  let index = $state(untrack(() => initialPageId ? initial.pages.findIndex(page => page.id === initialPageId) : 0));
   let showPages = $state(false);
   let readerCanvas = $state<HTMLDivElement>();
   let positioningReader = false;

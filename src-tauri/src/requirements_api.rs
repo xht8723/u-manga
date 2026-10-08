@@ -63,7 +63,7 @@ pub(super) async fn job_availability(
 ) -> Api<Availability> {
     let action = Action::from(job.kind);
     let profile = requirements::service_required(action).then_some(job.provider.clone());
-    let mut result = check_action(
+    let result = check_action(
         bundled,
         verification,
         job.settings.clone(),
@@ -73,22 +73,6 @@ pub(super) async fn job_availability(
         false,
     )
     .await?;
-    if job.fresh {
-        let valid = tauri::async_runtime::spawn_blocking(move || {
-            store::page(Path::new(&job.project), &job.page_id)
-                .map(|p| job.page_revision == Some(p.revision))
-        })
-        .await
-        .map_err(error)?
-        .map_err(error)?;
-        if !valid {
-            result.block(
-                "revision",
-                "page",
-                "Page changed; review it and confirm preparation again.",
-            );
-        }
-    }
     Ok(result)
 }
 pub(super) async fn effective(state: &AppState, path: Option<String>) -> Api<AppSettings> {
@@ -228,17 +212,29 @@ pub async fn jobs_readiness(
     let jobs = state.engine.snapshot(Some(&wanted));
     let mut output = HashMap::new();
     let mut cache: HashMap<String, Availability> = HashMap::new();
-    for runtime in jobs {
-        let job = runtime.job;
-        let key = serde_json::to_string(&(
-            job.kind,
-            &job.settings,
-            &job.provider,
-            &job.model_directory,
-            job.fresh
-                .then_some((&job.project, &job.page_id, job.page_revision)),
-        ))
-        .map_err(error)?;
+    let engine = state.engine.clone();
+    let plans = tauri::async_runtime::spawn_blocking(move || {
+        engine.resume_plans(jobs.into_iter().map(|r| r.job).collect())
+    })
+    .await
+    .map_err(error)?;
+    for (job_id, plan) in plans {
+        let job = match plan {
+            Ok(Some(job)) => job,
+            Ok(None) => {
+                output.insert(job_id, Availability::default());
+                continue;
+            }
+            Err(error) => {
+                let mut status = Availability::default();
+                status.block("configuration", "page", &error.to_string());
+                output.insert(job_id, status);
+                continue;
+            }
+        };
+        let key =
+            serde_json::to_string(&(job.kind, &job.settings, &job.provider, &job.model_directory))
+                .map_err(error)?;
         let status = if let Some(status) = cache.get(&key) {
             status.clone()
         } else {

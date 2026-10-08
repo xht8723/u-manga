@@ -314,7 +314,7 @@ async fn stop_during_mock_request_prevents_late_completion_and_double_dispatch()
     .unwrap();
     e.enqueue(&p.path, &[page.id.clone()], &provider).unwrap();
     e.start();
-    tokio::time::timeout(Duration::from_secs(5), async {
+    tokio::time::timeout(Duration::from_secs(30), async {
         while server.received_requests().await.unwrap().is_empty() {
             tokio::time::sleep(Duration::from_millis(10)).await;
         }

@@ -1,4 +1,7 @@
 {
+  "organizer.reorderDrag": "拖动以调整页面顺序",
+  "jobs.editPage": "编辑页面",
+  "jobs.pageUnavailable": "此页面已不在书籍中。",
   "m_240937754bdd": "无法获取模型支持信息。仍会应用你选择的思考设置。",
   "m_e2a8a6bcb2b9": "正在检查模型支持情况。现在即可切换思考设置。",
   "m_79d0e956d233": "此模型报告思考为必需功能。关闭请求可能被拒绝或忽略。",
@@ -1367,5 +1370,11 @@
   "audit.httpLimit": "服务响应超过 16 MiB 安全限制。请减少服务输出后手动重试。",
   "audit.responseLimit": "服务响应超过安全大小限制。请减少响应内容后重试。",
   "audit.bookIdentity": "书籍的存储标识不一致",
-  "audit.bookChanged": "书籍在导入过程中发生了变化"
+  "audit.bookChanged": "书籍在导入过程中发生了变化",
+  "jobs.controlSummary": "已安排 {scheduled} 项 · 重新处理 {restarting} 项 · 已跳过 {omitted} 项 · 受阻 {blocked} 项",
+  "jobs.attention": "部分任务需要处理",
+  "jobs.omitted": "已跳过：此页已排除自动翻译",
+  "jobs.conflict": "页面已更改；重新启动任务即可使用当前设置。",
+  "jobs.newer": "已保留较新的编辑；重新启动任务即可使用当前设置。",
+  "jobs.pageRemoved": "此页已不属于本书"
 }

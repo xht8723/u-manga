@@ -21,6 +21,8 @@ type Secret = Arc<dyn Fn(&ProviderProfile) -> Result<String> + Send + Sync>;
 mod auto_glossary;
 #[path = "batch_translation.rs"]
 mod batch_translation;
+#[path = "job_execution.rs"]
+mod job_execution;
 #[path = "region_requests.rs"]
 mod region_requests;
 #[path = "scheduler.rs"]
@@ -38,21 +40,23 @@ pub use scheduler::{
 mod preparation_tests;
 impl Engine {
     async fn process(self: Arc<Self>, id: &str, snapshot: (Job, CancellationToken)) -> Result<()> {
-        let (mut job, cancel) = snapshot;
+        let (job, cancel) = snapshot;
         if cancel.is_cancelled() {
             bail!("Cancelled");
         }
-        if let Err(error) = self.check_requirements(job.clone()).await {
-            self.block_job(id, &format!("{error:#}"));
-            bail!("{error:#}");
-        }
+        let Some(mut job) = self.begin_execution(&job, &cancel).await? else {
+            return Ok(());
+        };
         let path = PathBuf::from(&job.project);
         let _outputs = crate::assets::PageOutputs::new(&path, &job.page_id)?;
         self.progress(id, "loading", "");
         let mut page = store::page(&path, &job.page_id)?;
         let preparing = job.kind == JobKind::Preparation;
-        if job.fresh && job.page_revision != Some(page.revision) {
-            bail!("Page changed; review it and confirm preparation again");
+        if job.page_revision != Some(page.revision) {
+            return Err(crate::job_state::ExecutionError::error(
+                crate::job_state::FailureKind::Revision,
+                "Page changed; start the job again to use current settings.",
+            ));
         }
         let mut expected = page.revision;
         self.capture_glossary(&mut job, expected).await?;
@@ -182,8 +186,6 @@ impl Engine {
                 self.learn_glossary(&mut job, &page, &mut expected, &cancel)
                     .await?;
             }
-            self.refresh_translation_glossary(&mut job, expected)
-                .await?;
             let source_context =
                 store::preceding_context(&path, page.number, job.settings.context_pages)?;
             let context = source_context.for_llm();
@@ -558,7 +560,7 @@ fn translation_detail(page: &Page) -> String {
 // A fresh run bypasses older requests but can resume its own completed requests.
 fn request_cache_key(key: String, job: &Job) -> String {
     if job.fresh {
-        format!("{key}:fresh:{}", job.id)
+        format!("{key}:fresh:{}:{}", job.id, job.attempt)
     } else {
         key
     }

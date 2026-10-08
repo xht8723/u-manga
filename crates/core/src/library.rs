@@ -500,6 +500,52 @@ pub fn effective(b: &Book, defaults: &AppSettings) -> TranslationSettings {
     s
 }
 /// Commit membership and omission; existing page payloads come from SQLite, never stale UI snapshots.
+pub fn update_omissions(
+    root: &Path,
+    path: &Path,
+    base: &[String],
+    next: &[String],
+) -> Result<Book> {
+    let mut c = store::connection(path)?;
+    let tx = c.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+    let mut book = get(&tx)?;
+    let base: HashSet<_> = base.iter().collect();
+    let wanted: HashSet<_> = next.iter().collect();
+    anyhow::ensure!(wanted.len() == next.len(), "Duplicate omitted page ID");
+    let retained: HashSet<_> = book.chapters.iter().flat_map(|c| &c.page_ids).collect();
+    let mut result: HashSet<_> = book.omitted_page_ids.iter().cloned().collect();
+    for id in base.union(&wanted) {
+        crate::safety::identity(id)?;
+        if base.contains(id) != wanted.contains(id) {
+            anyhow::ensure!(retained.contains(id), "Page no longer belongs to this book");
+            if wanted.contains(id) {
+                result.insert((*id).clone());
+            } else {
+                result.remove(*id);
+            }
+        }
+    }
+    anyhow::ensure!(
+        wanted.iter().all(|id| retained.contains(id)),
+        "Omitted page is not in the retained chapters"
+    );
+    let ordered: Vec<_> = book
+        .chapters
+        .iter()
+        .flat_map(|c| &c.page_ids)
+        .filter(|id| result.contains(*id))
+        .cloned()
+        .collect();
+    if ordered == book.omitted_page_ids {
+        return Ok(book);
+    }
+    book.omitted_page_ids = ordered;
+    book.revision += 1;
+    put(&tx, &book)?;
+    tx.commit()?;
+    Ok(committed(root, path, book))
+}
+
 pub fn organize(
     root: &Path,
     path: &Path,
@@ -587,9 +633,13 @@ pub fn organize(
                 bail!("A page may belong to only one chapter")
             }
             let p = existing.get_mut(id).context("Unknown page in chapter")?;
+            let changed = p.number != n || !original_ids.contains(id);
             p.number = n;
             n += 1;
-            // Bump revisions so late editor/worker responses cannot replace the new order.
+            if !changed {
+                continue;
+            }
+            // Only changed page order invalidates page-bound work. Omission is book metadata.
             p.revision += 1;
             tx.execute(
                 "INSERT OR REPLACE INTO pages VALUES(?1,?2,?3,?4)",
